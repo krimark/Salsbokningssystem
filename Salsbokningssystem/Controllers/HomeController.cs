@@ -6,14 +6,14 @@ namespace Salsbokningssystem.Controllers
     {
         public ActionResult Index()
         {
-            ViewBag.Message = "Beep, beep, meep bajs";
+            ViewBag.Message = "Hej Gun!";
 
             return View();
         }
 
         public ActionResult Contact()
         {
-            ViewBag.Message = "Your contact page.";
+            ViewBag.Message = "Välkommen till din nya bokningssajt.";
 
             return View();
         }
