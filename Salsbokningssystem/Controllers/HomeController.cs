@@ -6,7 +6,7 @@ namespace Salsbokningssystem.Controllers
     {
         public ActionResult Index()
         {
-            ViewBag.Message = "Beep, beep, meep";
+            ViewBag.Message = "Beep, beep, meep prutt";
 
             return View();
         }
