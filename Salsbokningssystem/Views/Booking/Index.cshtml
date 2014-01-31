@@ -11,12 +11,7 @@
                 <h2>@ViewBag.Message</h2>
             </hgroup>
             
-            @{
-                if (Roles.IsUserInRole("Administratör"))
-                {
-                    @Html.ActionLink("Till adminsidan","Admin");
-                }
-            }
+         
             <p>
                 Bla, bla, bla
             </p>

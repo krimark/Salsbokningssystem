@@ -6,6 +6,10 @@ namespace Salsbokningssystem.Controllers
     {
         public ActionResult Index()
         {
+            if (Request.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Booking");
+            }
             return RedirectToAction("Login", "Account");
         }
 

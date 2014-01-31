@@ -18,19 +18,5 @@ namespace Salsbokningssystem.Controllers
         {
             return View();
         }
-
-        public ActionResult Admin()
-        {
-            if (Roles.IsUserInRole("Administratör"))
-            {
-                ViewBag.Message = "Här kan Gun administrera";
-
-
-                return View();
-            }
-
-            else
-                return RedirectToAction("Index", "Booking");
-        }
     }
 }

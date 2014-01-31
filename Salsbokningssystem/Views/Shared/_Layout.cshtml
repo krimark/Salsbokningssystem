@@ -32,9 +32,16 @@
                         <ul id="menu">
                             @if (Request.IsAuthenticated)
                             {
-                                <li>@Html.ActionLink("Hem", "Index", "Booking")</li>
+                                <li>@Html.ActionLink("Bokningssida", "Index", "Booking")</li>
                             }
-                            <li>@Html.ActionLink("Kontakta admin", "Contact", "Home")</li>
+                            @if (Roles.IsUserInRole("Administratör"))
+                            {
+                                <li>@Html.ActionLink("Adminsida", "Index", "Admin")</li>
+                            }
+                            @if (!Roles.IsUserInRole("Administratör"))
+                            {
+                                <li>@Html.ActionLink("Kontakta admin", "Contact", "Home")</li>
+                            }
                         </ul>
                     </nav>
                 </div>
