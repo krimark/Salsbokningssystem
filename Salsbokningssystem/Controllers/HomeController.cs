@@ -4,14 +4,9 @@ namespace Salsbokningssystem.Controllers
 {
     public class HomeController : Controller
     {
-
-        [Authorize]
-
         public ActionResult Index()
         {
-            ViewBag.Message = "Välkommen!";
-
-            return View();
+            return RedirectToAction("Login", "Account");
         }
 
         public ActionResult Contact()

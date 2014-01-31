@@ -31,7 +31,7 @@ namespace Salsbokningssystem.Controllers
         {
             if (ModelState.IsValid && WebSecurity.Login(model.UserName, model.Password, persistCookie: model.RememberMe))
             {
-                return RedirectToLocal(returnUrl);
+                return RedirectToAction("Index", "Booking");
             }
 
             // If we got this far, something failed, redisplay form
@@ -48,7 +48,7 @@ namespace Salsbokningssystem.Controllers
         {
             WebSecurity.Logout();
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Login", "Account");
         }
 
         //
