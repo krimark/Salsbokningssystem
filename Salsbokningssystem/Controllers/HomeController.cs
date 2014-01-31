@@ -20,5 +20,12 @@ namespace Salsbokningssystem.Controllers
 
             return View();
         }
+
+        public ActionResult Admin()
+        {
+            ViewBag.Message = "Här kan Gun administrera";
+
+            return View();
+        }
     }
 }
