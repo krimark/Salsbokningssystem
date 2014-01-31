@@ -12,7 +12,17 @@
         <header>
             <div class="content-wrapper">
                 <div class="float-left">
-                    <p class="site-title">@Html.ActionLink("Din logga här", "Index", "Home")</p>
+                     
+                    <p class="site-title">
+                        @if (Request.IsAuthenticated)
+                        {
+                            <a href="@Url.Action("Index", "Booking")"><img src="@Url.Content("~/Images/logotype_teknikhogskolan.png")" /></a>
+                        }
+                        else
+                        {
+                            <img src="@Url.Content("~/Images/logotype_teknikhogskolan.png")" />
+                        }
+                    </p>
                 </div>
                 <div class="float-right">
                     <section id="login">
@@ -20,7 +30,10 @@
                     </section>
                     <nav>
                         <ul id="menu">
-                            <li>@Html.ActionLink("Hem", "Index", "Home")</li>
+                            @if (Request.IsAuthenticated)
+                            {
+                                <li>@Html.ActionLink("Hem", "Index", "Booking")</li>
+                            }
                             <li>@Html.ActionLink("Kontakta admin", "Contact", "Home")</li>
                         </ul>
                     </nav>
