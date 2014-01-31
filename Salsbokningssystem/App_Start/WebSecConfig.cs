@@ -29,6 +29,12 @@ namespace Salsbokningssystem
                 WebSecurity.CreateUserAndAccount("admin", "password");
                 Roles.AddUserToRole("admin", "Administratör");
             }
+
+            if (!WebSecurity.UserExists("user"))
+            {
+                WebSecurity.CreateUserAndAccount("user", "password");
+                Roles.AddUserToRole("user", "Användare");
+            }
         }
     }
 }
