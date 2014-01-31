@@ -14,7 +14,7 @@
             @{
                 if (Roles.IsUserInRole("Administratör"))
                 {
-                    <input type="submit" id="AdminClick" value="Till adminsidan"/>
+                    @Html.ActionLink("Till adminsidan","Admin");
                 }
             }
             <p>
