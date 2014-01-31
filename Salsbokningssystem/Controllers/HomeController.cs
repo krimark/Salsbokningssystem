@@ -6,16 +6,17 @@ namespace Salsbokningssystem.Controllers
     {
 
         [Authorize]
+
         public ActionResult Index()
         {
-            ViewBag.Message = "Hej Gun!";
+            ViewBag.Message = "Välkommen!";
 
             return View();
         }
 
         public ActionResult Contact()
         {
-            ViewBag.Message = "Välkommen till din nya bokningssajt.";
+            ViewBag.Message = "Kontakta admin";
 
             return View();
         }
