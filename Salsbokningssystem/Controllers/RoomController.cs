@@ -42,9 +42,10 @@ namespace Salsbokningssystem.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(Room room)
         {
-
+        
             if (ModelState.IsValid)
             {
+                
                 db.Rooms.InsertOnSubmit(room);
                 db.SubmitChanges();
                 return RedirectToAction("Index");
@@ -78,16 +79,8 @@ namespace Salsbokningssystem.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            var roomAvailabilities = from ra in db.RoomAvailabilities.Where(c => c.RoomID == id) select ra;
-            var bookings = from b in db.Bookings.Where(c => c.RoomID == id) select b;
-            foreach (var ra in roomAvailabilities)
-            {
-                db.RoomAvailabilities.DeleteOnSubmit(ra);
-            }
-            foreach (var b in bookings)
-            {
-                db.Bookings.DeleteOnSubmit(b);
-            }
+
+          
 
 
 
