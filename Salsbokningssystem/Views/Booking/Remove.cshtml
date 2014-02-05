@@ -1,0 +1,36 @@
+﻿ @model Salsbokningssystem.Models.Booking
+<h2>Ta bort bokning</h2>
+
+<h3>Är du säker på att du vill ta bort bokningen?</h3>
+<fieldset>
+    <legend>Bokning</legend>
+    
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Room.Name)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Room.Name)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.StartTime)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.StartTime)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.EndTime)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.EndTime)
+    </div>
+    
+</fieldset>
+@using (Html.BeginForm()) {
+    @Html.AntiForgeryToken()
+    <p>
+        <input type="submit" value="Ta bort" /> |
+        @Html.ActionLink("Tillbaka till adminsidan", "Index")
+    </p>
+}

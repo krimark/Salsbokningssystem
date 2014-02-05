@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
@@ -15,19 +16,19 @@ namespace Salsbokningssystem.Controllers
 
         //Dropdown lista för start tider, behöver förbättras
 
-         public static List<SelectListItem> GetDropDownRoom()
-         {
-             List<SelectListItem> listItem = new List<SelectListItem>();
+        public static List<SelectListItem> GetDropDownRoom()
+        {
+            List<SelectListItem> listItem = new List<SelectListItem>();
 
-             DataClasses1DataContext db = new DataClasses1DataContext();
+            DataClasses1DataContext db = new DataClasses1DataContext();
 
-             var lm = db.Rooms;
-             foreach (var item in lm)
-             {
-                 listItem.Add(new SelectListItem() { Text = item.Name, Value = item.ID.ToString() });
-             }
-             return listItem;
-         } 
+            var lm = db.Rooms;
+            foreach (var item in lm)
+            {
+                listItem.Add(new SelectListItem() { Text = item.Name, Value = item.ID.ToString() });
+            }
+            return listItem;
+        }
 
 
         //
@@ -60,5 +61,39 @@ namespace Salsbokningssystem.Controllers
 
             return RedirectToAction("Index");
         }
+
+        [HttpGet]
+        public ActionResult Remove(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Booking booking = (from b in db.Bookings
+                               where b.ID == id
+                               select b).FirstOrDefault();
+            if (booking == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(booking);
+        }
+
+        [HttpPost, ActionName("Remove")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteConfirmed(int id)
+        {
+            Booking booking = (from b in db.Bookings
+                               where b.ID == id
+                               select b).FirstOrDefault();
+            if (booking != null)
+            {
+                db.Bookings.DeleteOnSubmit(booking);
+                db.SubmitChanges();
+            }
+            return RedirectToAction("Index", "Booking");
+        }
+
     }
 }
