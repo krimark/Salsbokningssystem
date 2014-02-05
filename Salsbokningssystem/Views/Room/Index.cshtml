@@ -5,9 +5,20 @@
     ViewBag.Title = "Room";
 }
 
-<h2>Admin</h2>
+@using (Ajax.BeginForm(new AjaxOptions
+                        {
+                            HttpMethod = "GET",
+                            InsertionMode = InsertionMode.Replace,
+                            UpdateTargetId = "contentDiv"
+                            
+                        }))
+{
+    <h2>Sök Rum</h2>
+    <input type="submit" value="Search" />
+    @Html.TextBox("searchString")
+    
+}
 
-<div id="contentDiv">
         <table>
 @foreach (var item in Model) {
     <tr>
@@ -34,4 +45,4 @@
     <p>
     @Html.ActionLink("Skapa nytt Projektrum", "Create")
     </p>
-     </div>
+     

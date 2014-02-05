@@ -14,10 +14,20 @@ namespace Salsbokningssystem.Controllers
         //
         // GET: /Room/
 
-        public ActionResult Index()
+        public ActionResult Index(string searchString,string projektRoom)
         {
             var rooms = from r in db.Rooms
                         select r;
+             if (!String.IsNullOrEmpty(searchString))
+            {
+                rooms = rooms.Where(s => s.Name.Contains(searchString) || s.info.Contains(searchString));
+            }
+            else if (!String.IsNullOrEmpty(projektRoom))
+            {
+                rooms = rooms.Where(s => s.Capacity == int.Parse(projektRoom));
+            }
+          
+        
             return View(rooms);
         }
 
@@ -68,10 +78,25 @@ namespace Salsbokningssystem.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            var rooms = from m in db.Rooms.Where(c => c.ID == id) select m;
-            foreach (var room in rooms)
+            var roomAvailabilities = from ra in db.RoomAvailabilities.Where(c => c.RoomID == id) select ra;
+            var bookings = from b in db.Bookings.Where(c => c.RoomID == id) select b;
+            foreach (var ra in roomAvailabilities)
             {
-                db.Rooms.DeleteOnSubmit(room);
+                db.RoomAvailabilities.DeleteOnSubmit(ra);
+            }
+            foreach (var b in bookings)
+            {
+                db.Bookings.DeleteOnSubmit(b);
+            }
+
+
+
+
+
+            var rooms = (from m in db.Rooms.Where(c => c.ID == id) select m).FirstOrDefault();
+           
+            {
+                db.Rooms.DeleteOnSubmit(rooms);
             }
             db.SubmitChanges();
 
