@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
+using WebMatrix.WebData;
 
 namespace Salsbokningssystem.Controllers
 {
@@ -14,19 +15,19 @@ namespace Salsbokningssystem.Controllers
 
         //Dropdown lista för start tider, behöver förbättras
 
-        /* public static List<SelectListItem> GetDropDownStart()
+         public static List<SelectListItem> GetDropDownRoom()
          {
              List<SelectListItem> listItem = new List<SelectListItem>();
 
              DataClasses1DataContext db = new DataClasses1DataContext();
 
-             var lm = db.Availabilities;
+             var lm = db.Rooms;
              foreach (var item in lm)
              {
-                 listItem.Add(new SelectListItem() { Text = item.StartTime.ToString(), Value = item.ID.ToString() });
+                 listItem.Add(new SelectListItem() { Text = item.Name, Value = item.ID.ToString() });
              }
              return listItem;
-         } */
+         } 
 
 
         //
@@ -36,6 +37,7 @@ namespace Salsbokningssystem.Controllers
         public ActionResult Index()
         {
             var bookings = from b in db.Bookings
+                           orderby b.StartTime
                            select b;
             return View(bookings);
         }
@@ -51,9 +53,9 @@ namespace Salsbokningssystem.Controllers
         {
             if (ModelState.IsValid)
             {
+                booking.UserID = WebSecurity.CurrentUserId;
                 db.Bookings.InsertOnSubmit(booking);
                 db.SubmitChanges();
-
             }
 
             return RedirectToAction("Index");

@@ -14,7 +14,7 @@
         <legend>Booking</legend>
 
         <div class="editor-label">
-            @Html.LabelFor(model => model.StartTime)
+            @Html.LabelFor(model => model.StartTime) (åååå/mm/dd tt:mm)
         </div>
         <div class="editor-field">
             @Html.EditorFor(model => model.StartTime)
@@ -22,7 +22,7 @@
         </div>
 
         <div class="editor-label">
-            @Html.LabelFor(model => model.EndTime)
+            @Html.LabelFor(model => model.EndTime) (åååå/mm/dd tt:mm)
         </div>
         <div class="editor-field">
             @Html.EditorFor(model => model.EndTime)
@@ -30,18 +30,10 @@
         </div>
 
         <div class="editor-label">
-            @Html.LabelFor(model => model.UserID)
-        </div>
-        <div class="editor-field">
-            @Html.EditorFor(model => model.UserID)
-            @Html.ValidationMessageFor(model => model.UserID)
-        </div>
-
-        <div class="editor-label">
             @Html.LabelFor(model => model.RoomID)
         </div>
         <div class="editor-field">
-            Projektrum: @Html.EditorFor(model => model.RoomID)
+            @Html.DropDownListFor(model => model.RoomID, Salsbokningssystem.Controllers.BookingController.GetDropDownRoom())
             @Html.ValidationMessageFor(model => model.RoomID)
         </div>
 
