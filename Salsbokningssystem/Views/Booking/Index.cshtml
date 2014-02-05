@@ -18,4 +18,14 @@
         </div>
     </section>
 }
-Här kan vi skriva info om systemet...
+<h3>@Html.ActionLink("Boka ny tid", "Book")</h3>
+
+@foreach (var item in Model)
+{
+    <div>
+        <h4>@item.Room.Name</h4>
+        <div>Bokad från @item.StartTime till @item.EndTime</div>
+        <p>Bokad av @item.User.UserName</p>
+        <hr />
+    </div>
+}
