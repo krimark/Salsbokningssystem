@@ -36,7 +36,7 @@
                             }
                             @if (Roles.IsUserInRole("Administratör"))
                             {
-                                <li>@Html.ActionLink("Adminsida", "Index", "Admin")</li>
+                                <li>@Html.ActionLink("Adminsida", "Index", "Room")</li>
                             }
                             @if (!Roles.IsUserInRole("Administratör"))
                             {

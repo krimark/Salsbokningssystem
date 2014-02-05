@@ -178,6 +178,7 @@
     <Compile Include="Controllers\BookingController.cs" />
     <Compile Include="Controllers\CalendarController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\RoomController.cs" />
     <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -591,6 +592,11 @@
     <Content Include="Views\Calendar\Index.cshtml" />
     <Content Include="Views\Booking\Index.cshtml" />
     <Content Include="Views\Admin\Index.cshtml" />
+    <Content Include="Views\Room\Index.cshtml" />
+    <Content Include="Views\Room\Create.cshtml" />
+    <Content Include="Views\Room\Delete.cshtml" />
+    <Content Include="Views\Room\Details.cshtml" />
+    <Content Include="Views\Room\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

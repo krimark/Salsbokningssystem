@@ -1,0 +1,43 @@
+﻿@model Salsbokningssystem.Models.Room
+
+@{
+    ViewBag.Title = "Radera Projektrum";
+}
+
+<h2>Ta bort projektrum</h2>
+
+<h3>Är du säker på att du vill ta bort Projektrum?</h3>
+<fieldset>
+    <legend>Projektrum</legend>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Name)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Name)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Capacity)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Capacity)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.info)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.info)
+    </div>
+
+
+    
+</fieldset>
+@using (Html.BeginForm()) {
+    @Html.AntiForgeryToken()
+    <p>
+        <input type="submit" value="Delete" /> |
+        @Html.ActionLink("Tillbaks till listan", "Index")
+    </p>
+}
