@@ -14,7 +14,7 @@
         <legend>Booking</legend>
 
         <div class="editor-label">
-            @Html.LabelFor(model => model.StartTime) (åååå/mm/dd tt:mm)
+            Ange starttid (åååå/mm/dd tt:mm)
         </div>
         <div class="editor-field">
             @Html.EditorFor(model => model.StartTime)
@@ -22,7 +22,7 @@
         </div>
 
         <div class="editor-label">
-            @Html.LabelFor(model => model.EndTime) (åååå/mm/dd tt:mm)
+            Ange sluttid: (åååå/mm/dd tt:mm)
         </div>
         <div class="editor-field">
             @Html.EditorFor(model => model.EndTime)
@@ -30,7 +30,7 @@
         </div>
 
         <div class="editor-label">
-            @Html.LabelFor(model => model.RoomID)
+            Välj grupprum:
         </div>
         <div class="editor-field">
             @Html.DropDownListFor(model => model.RoomID, Salsbokningssystem.Controllers.BookingController.GetDropDownRoom())
@@ -38,13 +38,13 @@
         </div>
 
         <p>
-            <input type="submit" value="Create" />
+            <input type="submit" value="Boka rummet" />
         </p>
     </fieldset>
 }
 
 <div>
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Tillbaka till huvudsidan", "Index")
 </div>
 
 @section Scripts {
