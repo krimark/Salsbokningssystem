@@ -5,7 +5,7 @@
 }
 
 <h2>Boka grupprum</h2>
-
+@ViewBag.text
 @using (Html.BeginForm()) {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true)

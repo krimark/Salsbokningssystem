@@ -52,11 +52,25 @@ namespace Salsbokningssystem.Controllers
         [HttpPost]
         public ActionResult Book(Booking booking)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && !Roles.IsUserInRole("Användare"))
             {
                 booking.UserID = WebSecurity.CurrentUserId;
                 db.Bookings.InsertOnSubmit(booking);
                 db.SubmitChanges();
+            }
+            else if (ModelState.IsValid) 
+            {
+                if (booking.EndTime <= booking.StartTime.AddHours(4))
+                {
+                    booking.UserID = WebSecurity.CurrentUserId;
+                    db.Bookings.InsertOnSubmit(booking);
+                    db.SubmitChanges();
+                }
+                else
+                {
+                    ViewBag.text = "Du måste boka mindre period";
+                    return View();
+                }
             }
 
             return RedirectToAction("Index");
