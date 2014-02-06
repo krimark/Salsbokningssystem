@@ -3,4 +3,9 @@
 }
 
 <h2>Administrering</h2>
-<h3>@ViewBag.Message</h3>
+
+@Html.ActionLink("Lägg in nya användare", "Register", "Account")
+<br/>
+@Html.ActionLink("Se befintliga bokningar", "BookingHistory")
+<br/>
+@Html.ActionLink("Hantera grupprum", "Index", "Room")
