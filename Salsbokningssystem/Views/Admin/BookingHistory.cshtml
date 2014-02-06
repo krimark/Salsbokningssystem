@@ -1,0 +1,31 @@
+﻿@using System.Activities.Statements
+@model IEnumerable<Salsbokningssystem.Models.Booking>
+
+
+
+@using (Ajax.BeginForm(new AjaxOptions
+                        {
+                            HttpMethod = "GET",
+                            InsertionMode = InsertionMode.Replace,
+                            UpdateTargetId = "contentDiv"
+
+                        }))
+{
+    <h2>Sök bokningar</h2>
+    <input type="submit" value="Sök" />
+    @Html.TextBox("searchString")
+    
+}
+
+<div id="contentDiv">
+    @foreach (var item in Model)
+    {
+        <div>
+            <h4>@item.Room.Name</h4>
+            <div>Bokad från @item.StartTime till @item.EndTime</div>
+            <p>Bokad av @item.User.UserName</p>
+            @Html.ActionLink("Ta bort bokning", "Remove", "Booking", new { id = item.ID }, null)
+            <hr />
+        </div>
+    }
+</div>

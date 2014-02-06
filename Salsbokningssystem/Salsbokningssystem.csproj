@@ -599,6 +599,7 @@
     <Content Include="Views\Room\Edit.cshtml" />
     <Content Include="Views\Booking\Book.cshtml" />
     <Content Include="Views\Booking\Remove.cshtml" />
+    <Content Include="Views\Admin\BookingHistory.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
