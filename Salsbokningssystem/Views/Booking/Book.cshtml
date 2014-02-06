@@ -1,11 +1,11 @@
-﻿@model Salsbokningssystem.Models.Booking
+﻿@using Salsbokningssystem.Helpers
+@model Salsbokningssystem.Models.Booking
 
 @{
     ViewBag.Title = "Book";
 }
 
 <h2>Boka grupprum</h2>
-@ViewBag.text
 @using (Html.BeginForm()) {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true)
@@ -33,10 +33,10 @@
             Välj grupprum:
         </div>
         <div class="editor-field">
-            @Html.DropDownListFor(model => model.RoomID, Salsbokningssystem.Controllers.BookingController.GetDropDownRoom())
+            @Html.DropDownListFor(model => model.RoomID, PopulateDropDown.Rooms())
             @Html.ValidationMessageFor(model => model.RoomID)
         </div>
-
+        @ViewBag.Error
         <p>
             <input type="submit" value="Boka rummet" />
         </p>

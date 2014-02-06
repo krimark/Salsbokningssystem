@@ -1,9 +1,8 @@
-﻿using Salsbokningssystem.Models;
-using System;
-using System.Collections.Generic;
+﻿using System;
+using Salsbokningssystem.Helpers;
+using Salsbokningssystem.Models;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 using WebMatrix.WebData;
@@ -13,24 +12,6 @@ namespace Salsbokningssystem.Controllers
     [Authorize]
     public class BookingController : Controller
     {
-
-        //Dropdown lista för start tider, behöver förbättras
-
-        public static List<SelectListItem> GetDropDownRoom()
-        {
-            List<SelectListItem> listItem = new List<SelectListItem>();
-
-            DataClasses1DataContext db = new DataClasses1DataContext();
-
-            var lm = db.Rooms;
-            foreach (var item in lm)
-            {
-                listItem.Add(new SelectListItem() { Text = item.Name, Value = item.ID.ToString() });
-            }
-            return listItem;
-        }
-
-
         //
         // GET: /Booking/
         DataClasses1DataContext db = new DataClasses1DataContext();
@@ -58,24 +39,37 @@ namespace Salsbokningssystem.Controllers
                 db.Bookings.InsertOnSubmit(booking);
                 db.SubmitChanges();
             }
-            else if (ModelState.IsValid) 
+            else if (ModelState.IsValid)
             {
-                if (booking.EndTime <= booking.StartTime.AddHours(4))
+                int dayCount = 0;
+              
+                for (DateTime iterator = DateTime.Today; iterator <= booking.StartTime; iterator = iterator.AddDays(1))
                 {
-                    booking.UserID = WebSecurity.CurrentUserId;
-                    db.Bookings.InsertOnSubmit(booking);
-                    db.SubmitChanges();
+                    if (iterator.IsWorkingDay())
+                    {
+                        dayCount++;
+                    }
                 }
-                else
+
+                if (dayCount > 6)
                 {
-                    ViewBag.text = "Du måste boka mindre period";
+                    ViewBag.Error = "Du kan endast boka en vecka i förväg.";
                     return View();
                 }
+                if (booking.EndTime > booking.StartTime.AddHours(4))
+                {
+                    ViewBag.Error = "Bokningstiden får ej överstiga 4 timmar.";
+                    return View();
+                }
+                booking.UserID = WebSecurity.CurrentUserId;
+                db.Bookings.InsertOnSubmit(booking);
+                db.SubmitChanges();
             }
 
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "Administratör")]
         [HttpGet]
         public ActionResult Remove(int? id)
         {
@@ -94,6 +88,7 @@ namespace Salsbokningssystem.Controllers
             return View(booking);
         }
 
+        [Authorize(Roles = "Administratör")]
         [HttpPost, ActionName("Remove")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)

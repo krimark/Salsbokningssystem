@@ -27,7 +27,10 @@
         <h4>@item.Room.Name</h4>
         <div>Bokad från @item.StartTime till @item.EndTime</div>
         <p>Bokad av @item.User.UserName</p>
-        @Html.ActionLink("Ta bort bokning", "Remove", "Booking", new {id = item.ID}, null)
+        @if (Roles.IsUserInRole("Administratör"))
+        {
+            @Html.ActionLink("Ta bort bokning", "Remove", "Booking", new {id = item.ID}, null)
+        }
         <hr />
     </div>
 }
