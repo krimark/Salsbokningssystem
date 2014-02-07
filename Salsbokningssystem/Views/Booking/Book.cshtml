@@ -17,7 +17,7 @@
             @if (Roles.IsUserInRole("Användare"))
             {
                 <text>Dag:</text>
-                @Html.DropDownList("bookingDateDDL", PopulateDropDown.Dates())
+                @Html.DropDownList("bookingDateDDL", PopulateDropDown.Dates(), new { @class = "form-control"})
             }
             else
             {
@@ -30,10 +30,10 @@
             @if (Roles.IsUserInRole("Användare"))
             {
                 <text>Från:</text>
-                @Html.DropDownList("bookingStartDDL", PopulateDropDown.FromTimes())
+                @Html.DropDownList("bookingStartDDL", PopulateDropDown.FromTimes(), new { @class = "form-control"})
                 <text><br /></text>
-                <text>Till:</text>
-                @Html.DropDownList("bookingStoppDDL", PopulateDropDown.ToTimes())
+                <text>Till:&nbsp;&nbsp;&nbsp;</text>
+                @Html.DropDownList("bookingStoppDDL", PopulateDropDown.ToTimes(), new { @class = "form-control"})
             }
             else
             {
@@ -46,7 +46,7 @@
             Välj grupprum:
         </div>
         <div>
-            @Html.DropDownListFor(model => model.RoomID, PopulateDropDown.Rooms())
+            @Html.DropDownListFor(model => model.RoomID, PopulateDropDown.Rooms(), new { @class = "form-control"})
             @Html.ValidationMessageFor(model => model.RoomID)
         </div>
         @ViewBag.Error
