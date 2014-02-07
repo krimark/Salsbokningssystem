@@ -53,11 +53,11 @@ namespace Salsbokningssystem.Models
 
     public class LoginModel
     {
-        [Required]
+        [Required(ErrorMessage = "Du måste ange ett Användarnamn")]
         [Display(Name = "Användarnamn")]
         public string UserName { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Du måste ange ett Lösenord")]
         [DataType(DataType.Password)]
         [Display(Name = "Lösenord")]
         public string Password { get; set; }
@@ -68,11 +68,12 @@ namespace Salsbokningssystem.Models
 
     public class RegisterModel
     {
-        [Required]
+
+        [Required(ErrorMessage = "Du måste ange ett Användarnamn")]
         [Display(Name = "Användarnamn")]
         public string UserName { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Du måste ange ett Lösenord")]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "Lösenord")]
@@ -81,6 +82,38 @@ namespace Salsbokningssystem.Models
         [DataType(DataType.Password)]
         [Display(Name = "Bekräfta lösenord")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        public string ConfirmPassword { get; set; }
+
+        [DataType(DataType.EmailAddress)]
+        [Display(Name = "Epost (Valfritt)")]
+        public string Email { get; set; }
+    }
+
+    public class EditUserModel
+    {
+
+        [Key]
+        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
+        public int UserId { get; set; }
+
+        public string UserName { get; set; }
+
+        [DataType(DataType.EmailAddress)]
+        [Display(Name = "Epost")]
+        public string Email { get; set; }
+
+        [Display(Name = "Aktiv")]
+        public bool Active { get; set; }
+
+
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
+        [DataType(DataType.Password)]
+        [Display(Name = "Nytt lösenord")]
+        public string NewPassword { get; set; }
+
+        [DataType(DataType.Password)]
+        [Display(Name = "Bekräfta det nya lösenordet")]
+        [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
     }
 }
