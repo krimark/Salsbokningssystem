@@ -30,11 +30,23 @@ namespace Salsbokningssystem.Controllers
             return View();
         }
 
+
+
         [HttpPost]
         public ActionResult Book(Booking booking)
         {
             if (ModelState.IsValid && !Roles.IsUserInRole("Användare"))
             {
+                if (booking.EndTime < DateTime.Now || booking.StartTime < DateTime.Now)
+                {
+                    ViewBag.Error = "Du kan inte boka DÅTID";
+                    return View();
+                }
+                if (booking.EndTime < booking.StartTime)
+                {
+                    ViewBag.Error = "Fel bookning START TIME måste vara tidgare än END TIME";
+                    return View();
+                }
                 booking.UserID = WebSecurity.CurrentUserId;
                 db.Bookings.InsertOnSubmit(booking);
                 db.SubmitChanges();
@@ -42,7 +54,7 @@ namespace Salsbokningssystem.Controllers
             else if (ModelState.IsValid)
             {
                 int dayCount = 0;
-              
+
                 for (DateTime iterator = DateTime.Today; iterator <= booking.StartTime; iterator = iterator.AddDays(1))
                 {
                     if (iterator.IsWorkingDay())
@@ -56,11 +68,29 @@ namespace Salsbokningssystem.Controllers
                     ViewBag.Error = "Du kan endast boka en vecka i förväg.";
                     return View();
                 }
-                if (booking.EndTime > booking.StartTime.AddHours(4))
+                if (booking.EndTime >= booking.StartTime.AddHours(4))
                 {
                     ViewBag.Error = "Bokningstiden får ej överstiga 4 timmar.";
                     return View();
                 }
+
+                if (booking.EndTime < booking.StartTime)
+                {
+                    ViewBag.Error = "Fel bookning START TIME måste vara tidgare än END TIME";
+                    return View();
+                }
+                if (booking.EndTime < booking.StartTime.AddHours(1))
+                {
+                    ViewBag.Error = "Bokningstiden får ej mindre än 1 timma.";
+                    return View();
+                }
+                if (booking.EndTime < DateTime.Now || booking.StartTime < DateTime.Now)
+                {
+                    ViewBag.Error = "Du kan inte boka DÅTID";
+                    return View();
+                }
+
+
 
                 var bookingList = from b in db.Bookings
                                   select b.UserID;
@@ -70,6 +100,7 @@ namespace Salsbokningssystem.Controllers
                     TempData["UserMessage"] = "Du har redan gjort en bokning!";
                     return RedirectToAction("Index");
                 }
+
 
                 booking.UserID = WebSecurity.CurrentUserId;
                 db.Bookings.InsertOnSubmit(booking);
