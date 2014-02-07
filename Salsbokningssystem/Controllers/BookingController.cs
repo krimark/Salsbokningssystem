@@ -1,5 +1,4 @@
 ﻿using System;
-using Salsbokningssystem.Helpers;
 using Salsbokningssystem.Models;
 using System.Linq;
 using System.Net;
@@ -33,7 +32,7 @@ namespace Salsbokningssystem.Controllers
 
 
         [HttpPost]
-        public ActionResult Book(Booking booking)
+        public ActionResult Book(Booking booking, FormCollection form)
         {
             if (ModelState.IsValid && !Roles.IsUserInRole("Användare"))
             {
@@ -42,7 +41,7 @@ namespace Salsbokningssystem.Controllers
                     ViewBag.Error = "Du kan inte boka DÅTID";
                     return View();
                 }
-                if (booking.EndTime < booking.StartTime)
+                if (booking.EndTime <= booking.StartTime)
                 {
                     ViewBag.Error = "Fel bookning START TIME måste vara tidgare än END TIME";
                     return View();
@@ -53,28 +52,23 @@ namespace Salsbokningssystem.Controllers
             }
             else if (ModelState.IsValid)
             {
-                int dayCount = 0;
+                var bookingDate = form["bookingDateDDL"];
+                var startTime = form["bookingStartDDL"];
+                var stoppTime = form["bookingStoppDDL"];
 
-                for (DateTime iterator = DateTime.Today; iterator <= booking.StartTime; iterator = iterator.AddDays(1))
-                {
-                    if (iterator.IsWorkingDay())
-                    {
-                        dayCount++;
-                    }
-                }
+                var startDateTime = bookingDate + " " + startTime;
+                var stoppDateTime = bookingDate + " " + stoppTime;
 
-                if (dayCount > 6)
-                {
-                    ViewBag.Error = "Du kan endast boka en vecka i förväg.";
-                    return View();
-                }
-                if (booking.EndTime >= booking.StartTime.AddHours(4))
+                booking.StartTime = Convert.ToDateTime(startDateTime);
+                booking.EndTime = Convert.ToDateTime(stoppDateTime);
+
+                if (booking.EndTime > booking.StartTime.AddHours(4))
                 {
                     ViewBag.Error = "Bokningstiden får ej överstiga 4 timmar.";
                     return View();
                 }
 
-                if (booking.EndTime < booking.StartTime)
+                if (booking.EndTime <= booking.StartTime)
                 {
                     ViewBag.Error = "Fel bookning START TIME måste vara tidgare än END TIME";
                     return View();

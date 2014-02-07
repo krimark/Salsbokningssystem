@@ -6,33 +6,43 @@
 }
 
 <h2>Boka grupprum</h2>
-@using (Html.BeginForm()) {
+@using (Html.BeginForm())
+{
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true)
 
     <fieldset>
         <legend>Booking</legend>
-
-        <div class="editor-label">
-            Ange starttid (åååå/mm/dd tt:mm)
+        <div>
+            @if (Roles.IsUserInRole("Användare"))
+            {
+                <text>Dag:</text> @Html.DropDownList("bookingDateDDL", PopulateDropDown.Dates())
+            }
+            else
+            {
+                <div>Ange starttid (åååå/mm/dd tt:mm)</div>
+                @Html.EditorFor(model => model.StartTime)
+                @Html.ValidationMessageFor(model => model.StartTime)
+            }
         </div>
-        <div class="editor-field">
-            @Html.EditorFor(model => model.StartTime)
-            @Html.ValidationMessageFor(model => model.StartTime)
+        <div>
+            @if (Roles.IsUserInRole("Användare"))
+            {
+                <text>Från:</text> @Html.DropDownList("bookingStartDDL", PopulateDropDown.FromTimes())
+                <br/>
+                <text>Till:</text> @Html.DropDownList("bookingStoppDDL", PopulateDropDown.ToTimes())
+            }
+            else
+            {
+                <div>Ange sluttid: (åååå/mm/dd tt:mm)</div>
+                @Html.EditorFor(model => model.EndTime)
+                @Html.ValidationMessageFor(model => model.EndTime)
+            }
         </div>
-
-        <div class="editor-label">
-            Ange sluttid: (åååå/mm/dd tt:mm)
-        </div>
-        <div class="editor-field">
-            @Html.EditorFor(model => model.EndTime)
-            @Html.ValidationMessageFor(model => model.EndTime)
-        </div>
-
-        <div class="editor-label">
+        <div>
             Välj grupprum:
         </div>
-        <div class="editor-field">
+        <div>
             @Html.DropDownListFor(model => model.RoomID, PopulateDropDown.Rooms())
             @Html.ValidationMessageFor(model => model.RoomID)
         </div>
@@ -41,8 +51,6 @@
             <input type="submit" value="Boka rummet" />
         </p>
     </fieldset>
-}
-
 <div>
     @Html.ActionLink("Tillbaka till huvudsidan", "Index")
 </div>
