@@ -18,6 +18,12 @@
         </div>
     </section>
 }
+<div>
+    @if (TempData["UserMessage"] != null)
+    {
+        <h4>@TempData["UserMessage"]</h4>  
+    }
+</div>
 
 <h3>@Html.ActionLink("Boka ny tid", "Book")</h3>
 

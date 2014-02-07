@@ -61,6 +61,16 @@ namespace Salsbokningssystem.Controllers
                     ViewBag.Error = "Bokningstiden får ej överstiga 4 timmar.";
                     return View();
                 }
+
+                var bookingList = from b in db.Bookings
+                                  select b.UserID;
+
+                if (bookingList.Contains(WebSecurity.CurrentUserId))
+                {
+                    TempData["UserMessage"] = "Du har redan gjort en bokning!";
+                    return RedirectToAction("Index");
+                }
+
                 booking.UserID = WebSecurity.CurrentUserId;
                 db.Bookings.InsertOnSubmit(booking);
                 db.SubmitChanges();
