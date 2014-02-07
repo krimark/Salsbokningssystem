@@ -16,11 +16,12 @@
         <div>
             @if (Roles.IsUserInRole("Användare"))
             {
-                <text>Dag:</text> @Html.DropDownList("bookingDateDDL", PopulateDropDown.Dates())
+                <text>Dag:</text>
+                @Html.DropDownList("bookingDateDDL", PopulateDropDown.Dates())
             }
             else
             {
-                <div>Ange starttid (åååå/mm/dd tt:mm)</div>
+                <text><div>Ange starttid (åååå/mm/dd tt:mm)</div></text>
                 @Html.EditorFor(model => model.StartTime)
                 @Html.ValidationMessageFor(model => model.StartTime)
             }
@@ -28,13 +29,15 @@
         <div>
             @if (Roles.IsUserInRole("Användare"))
             {
-                <text>Från:</text> @Html.DropDownList("bookingStartDDL", PopulateDropDown.FromTimes())
-                <br/>
-                <text>Till:</text> @Html.DropDownList("bookingStoppDDL", PopulateDropDown.ToTimes())
+                <text>Från:</text>
+                @Html.DropDownList("bookingStartDDL", PopulateDropDown.FromTimes())
+                <text><br /></text>
+                <text>Till:</text>
+                @Html.DropDownList("bookingStoppDDL", PopulateDropDown.ToTimes())
             }
             else
             {
-                <div>Ange sluttid: (åååå/mm/dd tt:mm)</div>
+                <text><div>Ange sluttid: (åååå/mm/dd tt:mm)</div></text>
                 @Html.EditorFor(model => model.EndTime)
                 @Html.ValidationMessageFor(model => model.EndTime)
             }
@@ -51,10 +54,10 @@
             <input type="submit" value="Boka rummet" />
         </p>
     </fieldset>
-<div>
-    @Html.ActionLink("Tillbaka till huvudsidan", "Index")
-</div>
-
+    <div>
+        @Html.ActionLink("Tillbaka till huvudsidan", "Index")
+    </div>
+}
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }
