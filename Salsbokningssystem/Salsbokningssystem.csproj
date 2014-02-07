@@ -602,6 +602,8 @@
     <Content Include="Views\Booking\Book.cshtml" />
     <Content Include="Views\Booking\Remove.cshtml" />
     <Content Include="Views\Admin\BookingHistory.cshtml" />
+    <Content Include="Views\Account\Index.cshtml" />
+    <Content Include="Views\Account\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
