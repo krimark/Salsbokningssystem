@@ -1,16 +1,114 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 using System.Web.Security;
 using WebMatrix.WebData;
 using Salsbokningssystem.Filters;
 using Salsbokningssystem.Models;
+using System.Security.Principal;
 
 namespace Salsbokningssystem.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Administratör")]
     [InitializeSimpleMembership]
     public class AccountController : Controller
     {
+
+
+        public ActionResult Index()
+        {
+            Models.DataClasses1DataContext db = new DataClasses1DataContext();
+            var users = db.Users.ToList();
+
+            return View(users);
+        }
+
+        public ActionResult Deactivate(int id)
+        {
+            Models.DataClasses1DataContext db = new DataClasses1DataContext();
+
+            Models.User user = db.Users.FirstOrDefault(u => u.ID == id);
+            user.Active = false;
+
+            db.SubmitChanges();
+
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult Activate(int id)
+        {
+            Models.DataClasses1DataContext db = new DataClasses1DataContext();
+
+            Models.User user = db.Users.FirstOrDefault(u => u.ID == id);
+            user.Active = true;
+
+            db.SubmitChanges();
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public ActionResult Edit(int id)
+        {
+            Models.DataClasses1DataContext db = new DataClasses1DataContext();
+
+            Models.EditUserModel user = db.Users.Where(i => i.ID == id).Select(u => new Models.EditUserModel
+            {
+                UserId = u.ID,
+                UserName = u.UserName,
+                Email = u.Email,
+                Active = u.Active,
+                NewPassword = "",
+                ConfirmPassword = ""
+
+            }).FirstOrDefault();
+
+            return View(user);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(EditUserModel model)
+        {
+            if (ModelState.IsValid)
+            {
+
+                //MembershipUser mUser = Membership.GetUser(model.UserName);
+
+                Models.DataClasses1DataContext db = new DataClasses1DataContext();
+
+                Models.User user = db.Users.FirstOrDefault(f => f.ID == model.UserId);
+
+                user.Email = model.Email;
+                user.Active = model.Active;
+
+                db.SubmitChanges();
+
+                // ChangePassword will throw an exception rather than return false in certain failure scenarios.
+                if (model.NewPassword != null)
+                {
+                    var token = WebSecurity.GeneratePasswordResetToken(model.UserName);
+                    try
+                    {
+                        //Reset password using the reset token and the new password
+                        WebSecurity.ResetPassword(token, model.NewPassword);
+                    }
+                    catch (Exception)
+                    {
+
+                        ModelState.AddModelError("", "Det nuvarande lösenordet är fel eller det nya lösenordet är ogiltigt.");
+                        return View(model);
+                    }
+
+                }
+
+            }
+
+            // If we got this far, something failed, redisplay form
+            return RedirectToAction("Index");
+        }
+
         //
         // GET: /Account/Login
 
@@ -51,10 +149,9 @@ namespace Salsbokningssystem.Controllers
             return RedirectToAction("Login", "Account");
         }
 
+
         //
         // GET: /Account/Register
-
-        [Authorize(Roles = "Administratör")]
         public ActionResult Register()
         {
             return View();
@@ -64,18 +161,36 @@ namespace Salsbokningssystem.Controllers
         // POST: /Account/Register
 
         [HttpPost]
-        [Authorize(Roles = "Administratör")]
         [ValidateAntiForgeryToken]
         public ActionResult Register(RegisterModel model)
         {
+
             if (ModelState.IsValid)
             {
                 // Attempt to register the user
                 try
                 {
-                    WebSecurity.CreateUserAndAccount(model.UserName, model.Password);
-                    WebSecurity.Login(model.UserName, model.Password);
-                    return RedirectToAction("Index", "Home");
+
+                    WebSecurity.CreateUserAndAccount(model.UserName, model.Password, new { Email = model.Email });
+
+                    Roles.AddUserToRole(model.UserName, "Användare");
+                    //WebSecurity.Login(model.UserName, model.Password);
+                    //MembershipUser mUser = Membership.GetUser(model.UserName);
+
+                    //int userID = (int)mUser.ProviderUserKey;
+
+                    //if (model.Email != null)
+                    //{
+                    //    Models.DataClasses1DataContext db = new DataClasses1DataContext();
+
+                    //    Models.User user = db.Users.FirstOrDefault(f => f.ID == userID);
+
+                    //    user.Email = model.Email;
+
+                    //    db.SubmitChanges();
+                    //}
+
+                    return RedirectToAction("Index");
                 }
                 catch (MembershipCreateUserException e)
                 {
@@ -87,53 +202,25 @@ namespace Salsbokningssystem.Controllers
             return View(model);
         }
 
-        //
-        // GET: /Account/Manage
-
-        public ActionResult Manage(ManageMessageId? message)
+        public ActionResult Delete(string userName)
         {
-            ViewBag.StatusMessage =
-                message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
-                : message == ManageMessageId.SetPasswordSuccess ? "Your password has been set."
-                : message == ManageMessageId.RemoveLoginSuccess ? "The external login was removed."
-                : "";
-            ViewBag.HasLocalPassword = true;
-            ViewBag.ReturnUrl = Url.Action("Manage");
-            return View();
-        }
-
-        //
-        // POST: /Account/Manage
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Manage(LocalPasswordModel model)
-        {
-            ViewBag.ReturnUrl = Url.Action("Manage");
-
-            if (ModelState.IsValid)
+            try
             {
-                // ChangePassword will throw an exception rather than return false in certain failure scenarios.
-                bool changePasswordSucceeded;
-                try
+                // TODO: Add delete logic here
+                if (Roles.GetRolesForUser(userName).Count() > 0)
                 {
-                    changePasswordSucceeded = WebSecurity.ChangePassword(User.Identity.Name, model.OldPassword, model.NewPassword);
-                }
-                catch (Exception)
-                {
-                    changePasswordSucceeded = false;
+                    Roles.RemoveUserFromRoles(userName, Roles.GetRolesForUser(userName));
                 }
 
-                if (changePasswordSucceeded)
-                {
-                    return RedirectToAction("Manage", new { Message = ManageMessageId.ChangePasswordSuccess });
-                }
-                ModelState.AddModelError("", "Det nuvarande lösenordet är fel eller det nya lösenordet är ogiltigt.");
+                ((SimpleMembershipProvider)Membership.Provider).DeleteAccount(userName); // deletes record from webpages_Membership table
+                ((SimpleMembershipProvider)Membership.Provider).DeleteUser(userName, true); // deletes record from UserProfile table
+
+            }
+            catch
+            {
             }
 
-
-            // If we got this far, something failed, redisplay form
-            return View(model);
+            return RedirectToAction("Index");
         }
 
         #region Helpers

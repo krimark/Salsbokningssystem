@@ -1,0 +1,45 @@
+﻿@model IEnumerable<Salsbokningssystem.Models.User>
+
+@{
+ViewBag.Title = "Användare";
+}
+
+<h2>Användare</h2>
+
+<div id="contentDiv">
+<table>
+@foreach (var item in Model) {
+<tr>
+<td>
+@Html.DisplayFor(modelItem => item.UserName)
+</td>
+<td>
+@Html.DisplayFor(modelItem => item.Email)
+</td>
+<td>
+@((bool)item.Active ? "Aktiv" : "Inaktiv")
+</td>
+   
+<td>
+@Html.ActionLink("Editera", "Edit", new { id = item.ID }) |
+@{
+    if(item.Active)
+    {
+        @Html.ActionLink("Avaktivera", "Deactivate", new { id = item.ID })
+    }
+    else
+    {
+        @Html.ActionLink("Aktivera", "Activate", new { id = item.ID })
+    }
+} |
+
+@Html.ActionLink("Radera", "Delete", new { userName = item.UserName })
+</td>
+</tr>
+
+}
+</table>
+<p>
+@Html.ActionLink("Lägg till ny användare", "Register")
+</p>
+</div>

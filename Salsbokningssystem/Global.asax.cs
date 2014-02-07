@@ -14,11 +14,12 @@ namespace Salsbokningssystem
         {
             AreaRegistration.RegisterAllAreas();
 
+            WebSecConfig.RegisterWebSec();
             WebApiConfig.Register(GlobalConfiguration.Configuration);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-            WebSecConfig.RegisterWebSec();
+            
         }
     }
 }

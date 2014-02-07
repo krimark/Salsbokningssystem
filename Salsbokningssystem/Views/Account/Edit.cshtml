@@ -1,0 +1,73 @@
+﻿@model Salsbokningssystem.Models.EditUserModel
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+
+@using (Html.BeginForm()) {
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend>EditUserModel</legend>
+
+        @Html.HiddenFor(model => model.UserId)
+
+        @Html.HiddenFor(model => model.UserName)
+
+        <h1>@Html.DisplayFor(model => model.UserName)</h1>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Email)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Email)
+            @Html.ValidationMessageFor(model => model.Email)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.NewPassword)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.NewPassword)
+            @Html.ValidationMessageFor(model => model.NewPassword)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.ConfirmPassword)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.ConfirmPassword)
+            @Html.ValidationMessageFor(model => model.ConfirmPassword)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Active)
+        </div>
+        <div class="editor-field">
+            @Html.DropDownListFor(model => model.Active, new SelectList(
+                new[] 
+                { 
+                    new { Value = "true", Text = "Aktiv" },
+                    new { Value = "false", Text = "Inaktiv" },
+                },
+                "Value",
+                "Text",
+                Model.Active
+            ))
+        </div>
+        <p>
+            <input type="submit" value="Save" />
+        </p>
+    </fieldset>
+}
+
+<p>
+@Html.ActionLink("Tillbaka till listan", "Index")
+</p>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
