@@ -98,6 +98,7 @@ namespace Salsbokningssystem.Controllers
             return View(booking);
         }
 
+
         [Authorize(Roles = "Administratör")]
         [HttpPost, ActionName("Remove")]
         [ValidateAntiForgeryToken]
