@@ -1,19 +1,16 @@
 ﻿@model Salsbokningssystem.Models.RegisterModel
 @{
-    ViewBag.Title = "Register";
+    ViewBag.Title = "Ny användare";
 }
 
 <hgroup class="title">
     <h1>@ViewBag.Title.</h1>
-    <h2>Create a new account.</h2>
+    <h2>Skapa en ny användare</h2>
 </hgroup>
 
 @using (Html.BeginForm()) {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary()
-
-    <fieldset>
-        <legend>Registration Form</legend>
 
         <div class="editor-label">
             @Html.LabelFor(model => model.UserName)
@@ -45,8 +42,19 @@
             @Html.EditorFor(model => model.Email)
             @Html.ValidationMessageFor(model => model.Email)
         </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Role)
+        </div>
+        <div>
+            @Html.RadioButtonFor(model => model.Role,"Administratör", new { style = "width:50px;"}) Administratör
+        </div>
+        <div>
+            @Html.RadioButtonFor(model => model.Role,"Lärare", new { style = "width:50px;"}) Lärare
+        </div>
+        <div>
+            @Html.RadioButtonFor(model => model.Role,"Användare", new { style = "width:50px;"}) Användare
+        </div>
         <input type="submit" value="Register" />
-    </fieldset>
 }
 <p>
 @Html.ActionLink("Tillbaka till listan", "Index")

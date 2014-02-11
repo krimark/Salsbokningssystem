@@ -605,7 +605,7 @@
     <Content Include="Views\Admin\BookingHistory.cshtml" />
     <Content Include="Views\Account\Index.cshtml" />
     <Content Include="Views\Account\Edit.cshtml" />
-    <Content Include="Views\Account\BatchRegister.cshtml" />
+    <Content Include="Views\Account\BatchFile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

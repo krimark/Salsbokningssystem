@@ -7,6 +7,8 @@ using WebMatrix.WebData;
 using Salsbokningssystem.Filters;
 using Salsbokningssystem.Models;
 using System.Security.Principal;
+using System.Web;
+using System.IO;
 
 namespace Salsbokningssystem.Controllers
 {
@@ -18,10 +20,23 @@ namespace Salsbokningssystem.Controllers
 
         public ActionResult Index()
         {
+            List<Models.IndexViewModel> modelList = new List<IndexViewModel>();
+
             Models.DataClasses1DataContext db = new DataClasses1DataContext();
             var users = db.Users.ToList();
 
-            return View(users);
+            foreach(var user in users)
+            {
+                Models.IndexViewModel model = new IndexViewModel();
+                model.ID = user.ID;
+                model.UserName = user.UserName;
+                model.Role = Roles.GetRolesForUser(user.UserName).FirstOrDefault();
+                model.Email = user.Email;
+                model.Active = user.Active;
+                modelList.Add(model);
+            }
+ 
+            return View(modelList);
         }
 
         public ActionResult Deactivate(int id)
@@ -61,8 +76,9 @@ namespace Salsbokningssystem.Controllers
                 Active = u.Active,
                 NewPassword = "",
                 ConfirmPassword = ""
-
             }).FirstOrDefault();
+
+            user.Role = Roles.GetRolesForUser(user.UserName).FirstOrDefault();
 
             return View(user);
         }
@@ -74,8 +90,6 @@ namespace Salsbokningssystem.Controllers
             if (ModelState.IsValid)
             {
 
-                //MembershipUser mUser = Membership.GetUser(model.UserName);
-
                 Models.DataClasses1DataContext db = new DataClasses1DataContext();
 
                 Models.User user = db.Users.FirstOrDefault(f => f.ID == model.UserId);
@@ -84,6 +98,14 @@ namespace Salsbokningssystem.Controllers
                 user.Active = model.Active;
 
                 db.SubmitChanges();
+
+                string currentRole = Roles.GetRolesForUser(user.UserName).FirstOrDefault();
+
+                if (currentRole != model.Role)
+                {
+                    Roles.RemoveUserFromRole(user.UserName, currentRole);
+                    Roles.AddUserToRole(user.UserName, model.Role);
+                }
 
                 // ChangePassword will throw an exception rather than return false in certain failure scenarios.
                 if (model.NewPassword != null)
@@ -154,7 +176,8 @@ namespace Salsbokningssystem.Controllers
         // GET: /Account/Register
         public ActionResult Register()
         {
-            return View();
+            Models.RegisterModel model = new RegisterModel();
+            return View(model);
         }
 
         //
@@ -170,25 +193,9 @@ namespace Salsbokningssystem.Controllers
                 // Attempt to register the user
                 try
                 {
-
                     WebSecurity.CreateUserAndAccount(model.UserName, model.Password, new { Email = model.Email });
 
-                    Roles.AddUserToRole(model.UserName, "Användare");
-                    //WebSecurity.Login(model.UserName, model.Password);
-                    //MembershipUser mUser = Membership.GetUser(model.UserName);
-
-                    //int userID = (int)mUser.ProviderUserKey;
-
-                    //if (model.Email != null)
-                    //{
-                    //    Models.DataClasses1DataContext db = new DataClasses1DataContext();
-
-                    //    Models.User user = db.Users.FirstOrDefault(f => f.ID == userID);
-
-                    //    user.Email = model.Email;
-
-                    //    db.SubmitChanges();
-                    //}
+                    Roles.AddUserToRole(model.UserName, model.Role);
 
                     return RedirectToAction("Index");
                 }
@@ -223,11 +230,70 @@ namespace Salsbokningssystem.Controllers
             return RedirectToAction("Index");
         }
 
-        public ActionResult BatchRegister()
+        public ActionResult BatchFile()
         {
 
 
             return View();
+        }
+
+        [HttpPost]
+        public ActionResult BatchFile(HttpPostedFileBase file)
+        {
+            //string selectedRole = form["Role"];
+            // Verify that the user selected a file
+            if (file != null && file.ContentLength > 0)
+            {
+                using (StreamReader sr = new StreamReader(file.InputStream))
+                {
+                    string fileText = sr.ReadToEnd();
+                    //string[] lineValues = fileText.Trim().Split(',');
+                    //string[] lineValues = fileText.Split(new[]{","}, StringSplitOptions.RemoveEmptyEntries);
+                    string[] lineValues = fileText.Split(',').Select(a => a.Trim()).ToArray();
+                    Models.BatchRegisterViewModel model = new Models.BatchRegisterViewModel();
+                    for (int i = 0; i < lineValues.Length; i+=3)
+                    {
+                        Models.BatchRegisterModel user = new Models.BatchRegisterModel();
+                        user.UserName = lineValues[i];
+                        user.Password = lineValues[i+1];
+                        user.Email = lineValues[i+2];
+
+                        model.registerList.Add(user);
+                    }
+
+                    return View(model);
+                    //do what you want with the file-text...
+                }
+
+            }
+
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult BatchRegister(Models.BatchRegisterViewModel model)
+        {
+            foreach (var user in model.registerList)
+            {
+                //if (ModelState.IsValid)
+                //{
+                    // Attempt to register the user
+                    try
+                    {
+
+                        WebSecurity.CreateUserAndAccount(user.UserName, user.Password, new { Email = user.Email });
+
+                        Roles.AddUserToRole(user.UserName, model.role);
+
+                    }
+                    catch (MembershipCreateUserException e)
+                    {
+                        ModelState.AddModelError("", ErrorCodeToString(e.StatusCode));
+                    }
+                //}
+            }
+
+            return RedirectToAction("Index");
         }
 
         #region Helpers

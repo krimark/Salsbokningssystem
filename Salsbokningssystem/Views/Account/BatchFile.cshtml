@@ -1,0 +1,62 @@
+﻿@model Salsbokningssystem.Models.BatchRegisterViewModel
+@{
+    ViewBag.Title = "BatchRegister";
+}
+
+<h2>BatchRegister</h2>
+
+@using (Html.BeginForm("BatchFile", "Account", FormMethod.Post, new { enctype = "multipart/form-data" })){
+    <div>
+        <div>Välj en textfil som innehåller (användarnamn, lösenord, epost) separerat med komma</div>
+        <input type="file" name="file" id="file" />
+        <input type="submit" name="submit" value="Ladda upp fil" />
+    </div>
+}
+
+@if(Model != null)
+{
+    using (Html.BeginForm("BatchRegister", "Account", FormMethod.Post)){
+        <table>
+            <tr>
+                <th>
+                    Användarnamn
+                </th>
+                <th>
+                    Lösenord
+                </th>
+                <th>
+                    Email
+                </th>
+            </tr>
+
+        @for (int i = 0; i < 3; i++) {
+            <tr>
+                <td>
+                    @Html.EditorFor(m => m.registerList[i].UserName)
+                </td>
+                <td>
+                    @Html.EditorFor(m => m.registerList[i].Password)
+                </td>
+                <td>
+                    @Html.EditorFor(m => m.registerList[i].Email)
+                </td>
+            </tr>
+        }
+        </table>
+        <div>Välj behörighet</div>
+        <div>
+            @Html.RadioButtonFor(m => m.role,"Lärare", new { style = "width:50px;"}) Lärare
+        </div>
+        <div>
+            @Html.RadioButtonFor(m => m.role,"Användare", new { style = "width:50px;"}) Användare
+        </div>
+        <div>
+            <input type="submit" name="submit" value="Skapa Användare" />
+        </div>
+    }
+
+}
+
+<div>
+    @Html.ActionLink("Tillbaka till listan", "Index")
+</div>

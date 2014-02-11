@@ -22,7 +22,7 @@ namespace Salsbokningssystem.Controllers
                            select b;
             return View(bookings);
         }
-
+        
         [HttpGet]
         public ActionResult Book()
         {
