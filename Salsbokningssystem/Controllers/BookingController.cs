@@ -46,6 +46,11 @@ namespace Salsbokningssystem.Controllers
                     ViewBag.Error = "Fel bookning START TIME måste vara tidgare än END TIME";
                     return View();
                 }
+                if (PreviousBookingExists(booking.StartTime, booking.EndTime))
+                {
+                    TempData["UserMessage"] = "Bokningstiden du angav krockar med en existerande bokning.";
+                    return RedirectToAction("Index");
+                }
                 booking.UserID = WebSecurity.CurrentUserId;
                 db.Bookings.InsertOnSubmit(booking);
                 db.SubmitChanges();
@@ -94,7 +99,11 @@ namespace Salsbokningssystem.Controllers
                     TempData["UserMessage"] = "Du har redan gjort en bokning!";
                     return RedirectToAction("Index");
                 }
-
+                if (PreviousBookingExists(booking.StartTime, booking.EndTime))
+                {
+                    TempData["UserMessage"] = "Bokningstiden du angav krockar med en existerande bokning.";
+                    return RedirectToAction("Index");
+                }
 
                 booking.UserID = WebSecurity.CurrentUserId;
                 db.Bookings.InsertOnSubmit(booking);
@@ -123,7 +132,6 @@ namespace Salsbokningssystem.Controllers
             return View(booking);
         }
 
-
         [Authorize(Roles = "Administratör")]
         [HttpPost, ActionName("Remove")]
         [ValidateAntiForgeryToken]
@@ -140,5 +148,13 @@ namespace Salsbokningssystem.Controllers
             return RedirectToAction("Index", "Booking");
         }
 
+        private bool PreviousBookingExists(DateTime bookingStart, DateTime bookingEnd)
+        {
+            var result = (from b in db.Bookings
+                          where b.StartTime < bookingEnd && bookingStart < b.EndTime
+                          select b).FirstOrDefault();
+
+            return result != null;
+        }
     }
 }
