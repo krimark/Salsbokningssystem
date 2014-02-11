@@ -68,11 +68,11 @@ namespace Salsbokningssystem.Controllers
                     return View();
                 }
 
-                if (booking.EndTime <= booking.StartTime)
-                {
-                    ViewBag.Error = "Fel bookning START TIME måste vara tidgare än END TIME";
-                    return View();
-                }
+                //if (booking.EndTime <= booking.StartTime)
+                //{
+                //    ViewBag.Error = "Fel bookning START TIME måste vara tidgare än END TIME";
+                //    return View();
+                //}
                 if (booking.EndTime < booking.StartTime.AddHours(1))
                 {
                     ViewBag.Error = "Bokningstiden får ej mindre än 1 timma.";
