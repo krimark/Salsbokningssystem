@@ -223,6 +223,13 @@ namespace Salsbokningssystem.Controllers
             return RedirectToAction("Index");
         }
 
+        public ActionResult BatchRegister()
+        {
+
+
+            return View();
+        }
+
         #region Helpers
         private ActionResult RedirectToLocal(string returnUrl)
         {
