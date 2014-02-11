@@ -30,6 +30,12 @@ namespace Salsbokningssystem
                 Roles.AddUserToRole("admin", "Administratör");
             }
 
+            if (!WebSecurity.UserExists("teacher"))
+            {
+                WebSecurity.CreateUserAndAccount("teacher", "password");
+                Roles.AddUserToRole("teacher", "Lärare");
+            }
+
             if (!WebSecurity.UserExists("user"))
             {
                 WebSecurity.CreateUserAndAccount("user", "password");
