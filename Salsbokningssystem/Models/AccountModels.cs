@@ -129,7 +129,7 @@ namespace Salsbokningssystem.Models
         
     }
 
-    public class IndexViewModel
+    public class AccountIndexViewModel
     {
         public int ID { get; set; }
         public string UserName { get; set; }

@@ -1,7 +1,20 @@
-﻿@model IEnumerable<Salsbokningssystem.Models.IndexViewModel>
+﻿@model IEnumerable<Salsbokningssystem.Models.AccountIndexViewModel>
 
 @{
-    ViewBag.Title = "Användare";
+    ViewBag.Title = "Hantera användare";
+}
+@section featured {
+    <section class="featured">
+        <div class="content-wrapper">
+            <hgroup class="title">
+                <h1>@ViewBag.Title</h1>
+            </hgroup>
+                  
+            <p id="maintitle">
+                Det finns för närvarande: @Model.Count()st registreringar.
+            </p>
+        </div>
+    </section>
 }
 
 <h2>Användare</h2>
@@ -10,40 +23,18 @@
     @Html.ActionLink("Lägg till ny användare", "Register") |
     @Html.ActionLink("Använd batchfil", "BatchFile")
 </div>
+@using (Ajax.BeginForm(new AjaxOptions
+                        {
+                            HttpMethod = "POST",
+                            InsertionMode = InsertionMode.Replace,
+                            UpdateTargetId = "contentDiv"
+                            
+                        }))
+{
+    @Html.TextBox("searchString")
+    <input type="submit" value="Sök" />
+    
+}
 <div id="contentDiv">
-    <table>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UserName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Role)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Email)
-                </td>
-                <td>
-                    @((bool)item.Active ? "Aktiv" : "Inaktiv")
-                </td>
-
-                <td>
-                    @Html.ActionLink("Editera", "Edit", new { id = item.ID }) |
-                    
-                    @if (item.Active)
-                    {
-                        @Html.ActionLink("Avaktivera", "Deactivate", new { id = item.ID })
-                    }
-                    else
-                    {
-                        @Html.ActionLink("Aktivera", "Activate", new { id = item.ID })
-                    }
-                    |
-                    @Html.ActionLink("Radera", "Delete", new { userName = item.UserName })
-                </td>
-            </tr>
-
-        }
-    </table>
+    @Html.Partial("_UsersPartial",Model)
 </div>

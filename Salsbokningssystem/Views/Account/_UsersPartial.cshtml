@@ -1,0 +1,62 @@
+﻿@model IEnumerable<Salsbokningssystem.Models.AccountIndexViewModel>
+
+<table>
+    <tr>
+        <th>
+            @Ajax.ActionLink("Användarnamn",
+                "Index",
+                "Account",
+                new { orderBy = "Användarnamn" },
+                new AjaxOptions { UpdateTargetId = "contentDiv" })
+        </th>
+        <th>
+            @Ajax.ActionLink("Behörighet",
+                "Index",
+                "Account",
+                new { orderBy = "Behörighet" },
+                new AjaxOptions { UpdateTargetId = "contentDiv" })
+        </th>
+        <th>
+            @Ajax.ActionLink("Epost",
+                "Index",
+                "Account",
+                new { orderBy = "Epost" },
+                new AjaxOptions { UpdateTargetId = "contentDiv" })
+        </th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Role)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @((bool)item.Active ? "Aktiv" : "Inaktiv")
+            </td>
+
+            <td>
+                <div style="width:200px">
+                @Html.ActionLink("Editera", "Edit", new { id = item.ID }) |
+                    
+                @if (item.Active)
+                {
+                    @Html.ActionLink("Avaktivera", "Deactivate", new { id = item.ID })
+                }
+                else
+                {
+                    @Html.ActionLink("Aktivera", "Activate", new { id = item.ID })
+                }
+                |
+                @Html.ActionLink("Radera", "Delete", new { userName = item.UserName })
+                </div>
+            </td>
+        </tr>
+
+    }
+</table>
