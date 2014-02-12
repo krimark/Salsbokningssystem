@@ -233,36 +233,39 @@ namespace Salsbokningssystem.Controllers
         public ActionResult BatchFile()
         {
 
-
             return View();
         }
 
         [HttpPost]
         public ActionResult BatchFile(HttpPostedFileBase file)
         {
-            //string selectedRole = form["Role"];
+
             // Verify that the user selected a file
             if (file != null && file.ContentLength > 0)
             {
-                using (StreamReader sr = new StreamReader(file.InputStream))
+                using (StreamReader sr = new StreamReader(file.InputStream, System.Text.Encoding.Default))
                 {
                     string fileText = sr.ReadToEnd();
-                    //string[] lineValues = fileText.Trim().Split(',');
-                    //string[] lineValues = fileText.Split(new[]{","}, StringSplitOptions.RemoveEmptyEntries);
-                    string[] lineValues = fileText.Split(',').Select(a => a.Trim()).ToArray();
+                    string[] lineValues = fileText.Split(new[] { ';', '\r' })
+                        .Select(a => a.Trim()).ToArray();
+
+                    // Remove last line if its empty
+                    int nrOfLines = lineValues.Length;
+                    if (lineValues[lineValues.Length-1] == "")
+                        nrOfLines--;
+
                     Models.BatchRegisterViewModel model = new Models.BatchRegisterViewModel();
-                    for (int i = 0; i < lineValues.Length; i+=3)
+                    for (int i = 0; i < nrOfLines; i+=6)
                     {
                         Models.BatchRegisterModel user = new Models.BatchRegisterModel();
-                        user.UserName = lineValues[i];
-                        user.Password = lineValues[i+1];
-                        user.Email = lineValues[i+2];
+                        user.UserName = GenerateUserName(lineValues[i],lineValues[i+1]);
+                        user.Password = Membership.GeneratePassword(8, 0);
+                        user.Email = lineValues[i+4];
 
                         model.registerList.Add(user);
                     }
 
                     return View(model);
-                    //do what you want with the file-text...
                 }
 
             }
@@ -270,29 +273,41 @@ namespace Salsbokningssystem.Controllers
             return View();
         }
 
+        private string GenerateUserName(string lName, string fName)
+        {
+            int n = fName.IndexOf(" ");
+
+            if(n > 0)
+                fName = fName.Substring(0, n);
+
+            if(lName.Length > 6)
+                lName = lName.Substring(0, 6);
+
+            return fName + "." + lName;
+        }
         [HttpPost]
         public ActionResult BatchRegister(Models.BatchRegisterViewModel model)
         {
-            foreach (var user in model.registerList)
+            if (ModelState.IsValid)
             {
-                //if (ModelState.IsValid)
-                //{
-                    // Attempt to register the user
-                    try
-                    {
+                foreach (var user in model.registerList)
+                {
+                        // Attempt to register the user
+                        try
+                        {
 
-                        WebSecurity.CreateUserAndAccount(user.UserName, user.Password, new { Email = user.Email });
+                            WebSecurity.CreateUserAndAccount(user.UserName, user.Password, new { Email = user.Email });
 
-                        Roles.AddUserToRole(user.UserName, model.role);
+                            Roles.AddUserToRole(user.UserName, model.role);
 
-                    }
-                    catch (MembershipCreateUserException e)
-                    {
-                        ModelState.AddModelError("", ErrorCodeToString(e.StatusCode));
-                    }
-                //}
+                        }
+                        catch (MembershipCreateUserException e)
+                        {
+                            ModelState.AddModelError("", ErrorCodeToString(e.StatusCode));
+                        }
+                
+                }
             }
-
             return RedirectToAction("Index");
         }
 
