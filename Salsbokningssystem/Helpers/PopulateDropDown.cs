@@ -33,7 +33,7 @@ namespace Salsbokningssystem.Helpers
             {
                 if (date.IsWorkingDay())
                 {
-                    dateItems.Add(new SelectListItem { Text = String.Format("{0:d\\/M ddd}", date), Value = date.ToString("d", CultureInfo.InvariantCulture) });
+                    dateItems.Add(new SelectListItem { Text = String.Format("{0:d\\/M ddd}", date), Value = date.ToString("yyyy-MM-dd") });
                     dayCount++;
                 }
                 date = date.AddDays(1);

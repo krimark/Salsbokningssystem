@@ -4,7 +4,7 @@
 @{
     ViewBag.Title = "Book";
 }
-
+<link href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css" rel="stylesheet" />
 <h2>Boka grupprum</h2>
 @using (Html.BeginForm())
 {
@@ -17,36 +17,26 @@
             @if (Roles.IsUserInRole("Användare"))
             {
                 <text>Dag:</text>
-                @Html.DropDownList("bookingDateDDL", PopulateDropDown.Dates(), new { @class = "form-control"})
+                @Html.DropDownList("bookingDateDDL", PopulateDropDown.Dates(), new { @class = "form-control" })
             }
             else
-            {
-                <text><div>Ange starttid (åååå/mm/dd tt:mm)</div></text>
-                @Html.EditorFor(model => model.StartTime)
-                @Html.ValidationMessageFor(model => model.StartTime)
+            {   
+                @Html.Editor("datepicker")
             }
         </div>
         <div>
-            @if (Roles.IsUserInRole("Användare"))
-            {
-                <text>Från:</text>
-                @Html.DropDownList("bookingStartDDL", PopulateDropDown.FromTimes(), new { @class = "form-control"})
-                <text><br /></text>
-                <text>Till:&nbsp;&nbsp;&nbsp;</text>
-                @Html.DropDownList("bookingStoppDDL", PopulateDropDown.ToTimes(), new { @class = "form-control"})
-            }
-            else
-            {
-                <text><div>Ange sluttid: (åååå/mm/dd tt:mm)</div></text>
-                @Html.EditorFor(model => model.EndTime)
-                @Html.ValidationMessageFor(model => model.EndTime)
-            }
+            Från:
+            @Html.DropDownList("bookingStartDDL", PopulateDropDown.FromTimes(), new { @class = "form-control" })
+            <br />
+            Till:&nbsp;&nbsp;&nbsp;
+            @Html.DropDownList("bookingStoppDDL", PopulateDropDown.ToTimes(), new { @class = "form-control" })
+
         </div>
         <div>
             Välj grupprum:
         </div>
         <div>
-            @Html.DropDownListFor(model => model.RoomID, PopulateDropDown.Rooms(), new { @class = "form-control"})
+            @Html.DropDownListFor(model => model.RoomID, PopulateDropDown.Rooms(), new { @class = "form-control" })
             @Html.ValidationMessageFor(model => model.RoomID)
         </div>
         @ViewBag.Error
@@ -60,4 +50,6 @@
 }
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+    <script src="~/Scripts/datepicker-sv.js"></script>
 }

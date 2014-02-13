@@ -34,6 +34,16 @@ namespace Salsbokningssystem.Controllers
         {
             if (ModelState.IsValid && !Roles.IsUserInRole("Användare"))
             {
+                var bookingDate = form["datepicker"];
+                var startTime = form["bookingStartDDL"];
+                var stoppTime = form["bookingStoppDDL"];
+
+                var startDateTime = bookingDate + " " + startTime;
+                var stoppDateTime = bookingDate + " " + stoppTime;
+
+                booking.StartTime = Convert.ToDateTime(startDateTime);
+                booking.EndTime = Convert.ToDateTime(stoppDateTime);
+
                 if (booking.EndTime < DateTime.Now || booking.StartTime < DateTime.Now)
                 {
                     ViewBag.Error = "Du kan inte boka DÅTID";
