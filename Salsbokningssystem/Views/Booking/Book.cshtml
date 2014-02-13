@@ -39,6 +39,13 @@
             @Html.DropDownListFor(model => model.RoomID, PopulateDropDown.Rooms(), new { @class = "form-control" })
             @Html.ValidationMessageFor(model => model.RoomID)
         </div>
+        @if (!Roles.IsUserInRole("Användare")) 
+        {
+             <div>
+                 <label for="reccuringDate">Boka återkommande tid (3 veckor)</label>
+                 <input type="checkbox" name="reccuringDate" id="reccuringDate" value="true" />
+             </div>
+        }
         @ViewBag.Error
         <p>
             <input type="submit" value="Boka rummet" />

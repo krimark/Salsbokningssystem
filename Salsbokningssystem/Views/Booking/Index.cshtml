@@ -16,9 +16,7 @@
          
             <p id="maintitle">
                 Välkommen till bokningsidan för Teknikhögskolans projektrum.
-                Här kan du boka projektrum till din grupp, kom ihåg att respektera
-                Teknikhögskolans trivselregler. Ge fan i att kasta snus på tavlan och
-                se till att hålla ljudnivån på en lagom nivå, *host* Jean.. *host*..
+
             </p>
         </div>
     </section>
@@ -46,9 +44,13 @@
     </div>
 }*@
 
-<text>Visa dag:</text>
-       
+Visa dag:
+
+<div id="DDLsubmit" onchange="function1">  
+
 @Html.DropDownList("bookingDateDDL", PopulateDropDown.Dates(), new { @class = "form-control"})
+
+ </div>    
 
        <table id="table" border="0" style="border-width:1px;border-style:solid;">
  
@@ -109,3 +111,9 @@
     </tbody>
     </table>
 
+<script>
+
+function function1() {
+
+$("‪#‎DDLsubmit‬").submit()}
+</script>
