@@ -24,6 +24,7 @@ namespace Salsbokningssystem.Controllers
 
             ViewBag.Room = (from f in db.Rooms
                             select f).ToList();
+
             ViewBag.Booking = (from f in db.Bookings
                                select f).ToList();
             

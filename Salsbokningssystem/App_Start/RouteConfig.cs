@@ -22,7 +22,7 @@ namespace Salsbokningssystem
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Account", action = "Login", id = UrlParameter.Optional }
+                defaults: new { controller = "Booking", action = "Index", id = UrlParameter.Optional }
             );
         }
     }
