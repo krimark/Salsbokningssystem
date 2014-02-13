@@ -19,6 +19,7 @@ namespace SendMail.Controllers
         [HttpPost]
         public ViewResult Index(Salsbokningssystem.Models.MailModel _objModelMail)
         {
+
             if (ModelState.IsValid)
             {
                 MailMessage mail = new MailMessage();
