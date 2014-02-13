@@ -30,19 +30,6 @@
 
 <h3>@Html.ActionLink("Boka ny tid", "Book")</h3>
 
-@*@foreach (var item in Model)
-{
-    <div>
-        <h4>@item.Room.Name</h4>
-        <div>Bokad från @item.StartTime till @item.EndTime</div>
-        <p>Bokad av @item.User.UserName</p>
-        @if (Roles.IsUserInRole("Administratör"))
-        {
-            @Html.ActionLink("Ta bort bokning", "Remove", "Booking", new {id = item.ID}, null)
-        }*@
-@*        <hr />
-    </div>
-}*@
 
 Visa dag:
 
@@ -65,6 +52,7 @@ Visa dag:
     {
         int a = 8 + j;
         int b=a+1;
+        
         <th>@a:00<br>@b:00</th>
         
     } 
@@ -92,8 +80,14 @@ Visa dag:
                 if (r.ID == b.RoomID && b.StartTime.Hour==t)
                        {
                 
-                          
-                         <label style="background-color:red"  >reserved</label>      
+                   int a = b.EndTime.Hour - b.StartTime.Hour;
+                    
+                    for(int i=0; i<a; i++)
+                        
+                    {                    
+                        <label style="background-color:red"  >reserved</label> 
+    
+                   }
                              
                    }
                 

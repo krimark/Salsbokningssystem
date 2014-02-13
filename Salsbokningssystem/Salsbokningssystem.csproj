@@ -175,12 +175,12 @@
     <Compile Include="Controllers\BookingController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\RoomController.cs" />
-    <Compile Include="Controllers\SendMailerController.cs" />
     <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\DateTimeExtension.cs" />
+    <Compile Include="Helpers\Mailer.cs" />
     <Compile Include="Helpers\PopulateDropDown.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\DataClasses1.designer.cs">
@@ -321,7 +321,6 @@
     <Content Include="Views\Account\Edit.cshtml" />
     <Content Include="Views\Account\BatchFile.cshtml" />
     <Content Include="Views\Account\_UsersPartial.cshtml" />
-    <Content Include="Views\SendMailer\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
