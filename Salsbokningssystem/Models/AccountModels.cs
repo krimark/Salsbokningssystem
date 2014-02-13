@@ -85,6 +85,10 @@ namespace Salsbokningssystem.Models
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
 
+        [Display(Name = "Grupp")]
+        [MaxLength(50, ErrorMessage = "Gruppnamnet får inte va längre än {2} tecken")]
+        public string UserGroup { get; set; }
+
         [DataType(DataType.EmailAddress)]
         [Display(Name = "Epost (Valfritt)")]
         public string Email { get; set; }
@@ -110,6 +114,10 @@ namespace Salsbokningssystem.Models
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
         [Display(Name = "Lösenord")]
         public string Password { get; set; }
+
+        [Display(Name = "Grupp")]
+        [MaxLength(50, ErrorMessage = "Gruppnamnet får inte va längre än {2} tecken")] 
+        public string UserGroup { get; set; }
 
         [DataType(DataType.EmailAddress)]
         [Display(Name = "Epost (Valfritt)")]
@@ -152,9 +160,12 @@ namespace Salsbokningssystem.Models
         [Display(Name = "Epost")]
         public string Email { get; set; }
 
+        [Display(Name = "Grupp")]
+        [MaxLength(50, ErrorMessage = "Gruppnamnet får inte va längre än {2} tecken")]
+        public string UserGroup { get; set; }
+
         [Display(Name = "Aktiv")]
         public bool Active { get; set; }
-
 
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
         [DataType(DataType.Password)]

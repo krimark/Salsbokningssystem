@@ -26,6 +26,9 @@
                     Lösenord
                 </th>
                 <th>
+                    Grupp
+                </th>
+                <th>
                     Email
                 </th>
             </tr>
@@ -37,6 +40,9 @@
                 </td>
                 <td>
                     @Html.EditorFor(m => m.registerList[i].Password)
+                </td>
+                <td>
+                    @Html.EditorFor(m => m.registerList[i].UserGroup)
                 </td>
                 <td>
                     @Html.EditorFor(m => m.registerList[i].Email)

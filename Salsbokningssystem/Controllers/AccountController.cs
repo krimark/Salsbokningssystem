@@ -16,6 +16,9 @@ namespace Salsbokningssystem.Controllers
     [InitializeSimpleMembership]
     public class AccountController : Controller
     {
+
+        Random rand = new Random();
+
         [Authorize(Roles = "Administratör")]
         public ActionResult Index(string searchString, string orderBy)
         {
@@ -104,7 +107,9 @@ namespace Salsbokningssystem.Controllers
                 Email = u.Email,
                 Active = u.Active,
                 NewPassword = "",
-                ConfirmPassword = ""
+                ConfirmPassword = "",
+                UserGroup = u.UserGroup
+
             }).FirstOrDefault();
 
             user.Role = Roles.GetRolesForUser(user.UserName).FirstOrDefault();
@@ -126,6 +131,7 @@ namespace Salsbokningssystem.Controllers
 
                 user.Email = model.Email;
                 user.Active = model.Active;
+                user.UserGroup = model.UserGroup;
 
                 db.SubmitChanges();
 
@@ -225,7 +231,7 @@ namespace Salsbokningssystem.Controllers
                 // Attempt to register the user
                 try
                 {
-                    WebSecurity.CreateUserAndAccount(model.UserName, model.Password, new { Email = model.Email });
+                    WebSecurity.CreateUserAndAccount(model.UserName, model.Password, new { Email = model.Email, UserGroup = model.UserGroup });
 
                     Roles.AddUserToRole(model.UserName, model.Role);
 
@@ -294,18 +300,29 @@ namespace Salsbokningssystem.Controllers
                     {
                         Models.BatchRegisterModel user = new Models.BatchRegisterModel();
                         user.UserName = GenerateUserName(lineValues[i], lineValues[i + 1]);
-                        user.Password = Membership.GeneratePassword(8, 0);
+                        user.Password = GeneratePassword(8);
                         user.Email = lineValues[i + 4];
-
+                        user.UserGroup = lineValues[i + 5];
                         model.registerList.Add(user);
                     }
 
                     return View(model);
                 }
-
             }
 
             return View();
+        }
+
+        private string GeneratePassword(int length)
+        {
+            string allowedChars = "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ0123456789";
+            var chars = new char[length];
+            //RandomGen2 random = new RandomGen2();
+            for (int i = 0; i < length; i++)
+            {
+                chars[i] = allowedChars[rand.Next(0, allowedChars.Length)];
+            }
+            return new string(chars);
         }
 
         private string GenerateUserName(string lName, string fName)
