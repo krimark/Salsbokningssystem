@@ -5,6 +5,7 @@ using System.Net;
 using System.Web.Mvc;
 using System.Web.Security;
 using WebMatrix.WebData;
+using System.Collections.Generic;
 
 namespace Salsbokningssystem.Controllers
 {
@@ -28,7 +29,7 @@ namespace Salsbokningssystem.Controllers
             
             return View(bookings);
         }
-        
+
         [HttpGet]
         public ActionResult Book()
         {
@@ -40,7 +41,7 @@ namespace Salsbokningssystem.Controllers
         }
 
         [HttpPost]
-        public ActionResult Book(Booking booking, FormCollection form)
+        public ActionResult Book(Booking booking, FormCollection form, bool reccuringDate)
         {
             if (ModelState.IsValid && !Roles.IsUserInRole("Användare"))
             {
@@ -69,9 +70,47 @@ namespace Salsbokningssystem.Controllers
                     TempData["UserMessage"] = "Bokningstiden du angav krockar med en existerande bokning.";
                     return RedirectToAction("Index");
                 }
-                booking.UserID = WebSecurity.CurrentUserId;
-                db.Bookings.InsertOnSubmit(booking);
-                db.SubmitChanges();
+
+                if (reccuringDate == true)
+                {
+                    for (int i = 0; i < 3; i++)
+                    {
+                        switch (i)
+                        {
+                            case 0:
+                                booking.UserID = WebSecurity.CurrentUserId;
+                                db.Bookings.InsertOnSubmit(booking);
+                                db.SubmitChanges();
+                                break;
+
+                            case 1:
+                                Booking booking2 = new Booking();
+                                booking2.StartTime = booking.StartTime.AddDays(7);
+                                booking2.EndTime = booking.EndTime.AddDays(7);
+                                booking2.RoomID = booking.RoomID;
+                                booking2.UserID = WebSecurity.CurrentUserId;
+                                db.Bookings.InsertOnSubmit(booking2);
+                                db.SubmitChanges();
+                                break;
+
+                            case 2:
+                                Booking booking3 = new Booking();
+                                booking3.StartTime = booking.StartTime.AddDays(14);
+                                booking3.EndTime = booking.EndTime.AddDays(14);
+                                booking3.RoomID = booking.RoomID;
+                                booking3.UserID = WebSecurity.CurrentUserId;
+                                db.Bookings.InsertOnSubmit(booking3);
+                                db.SubmitChanges();
+                                break;
+                        }
+                    }
+                }
+                else
+                {
+                    booking.UserID = WebSecurity.CurrentUserId;
+                    db.Bookings.InsertOnSubmit(booking);
+                    db.SubmitChanges();
+                }
             }
             else if (ModelState.IsValid)
             {
