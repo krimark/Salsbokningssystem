@@ -1,11 +1,11 @@
 ﻿using System;
+using Salsbokningssystem.Helpers;
 using Salsbokningssystem.Models;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using System.Web.Security;
 using WebMatrix.WebData;
-using System.Collections.Generic;
 
 namespace Salsbokningssystem.Controllers
 {
@@ -193,12 +193,21 @@ namespace Salsbokningssystem.Controllers
             Booking booking = (from b in db.Bookings
                                where b.ID == id
                                select b).FirstOrDefault();
+
             if (booking != null)
             {
+                var user = (from u in db.Users
+                            where u.ID == booking.UserID
+                            select u).FirstOrDefault();
+
                 db.Bookings.DeleteOnSubmit(booking);
                 db.SubmitChanges();
+                if (user != null)
+                {
+                    Mailer.SendMail(user.Email, "Din bokning har avbrutits av Gun!", "Bokning avbruten");
+                }
             }
-            return RedirectToAction("Index", "Booking");
+            return RedirectToAction("Index", "Admin");
         }
 
         private bool PreviousBookingExists(int roomId, DateTime bookingStart, DateTime bookingEnd)
