@@ -12,11 +12,11 @@ using System.IO;
 
 namespace Salsbokningssystem.Controllers
 {
-    [Authorize(Roles = "Administratör")]
+
     [InitializeSimpleMembership]
     public class AccountController : Controller
     {
-
+        [Authorize(Roles = "Administratör")]
         public ActionResult Index(string searchString, string orderBy)
         {
             List<Models.AccountIndexViewModel> modelList = new List<AccountIndexViewModel>();
@@ -61,27 +61,7 @@ namespace Salsbokningssystem.Controllers
                 return View(sortedList);
         }
 
-        public ActionResult Search(string searchString)
-        {
-
-            List<Models.AccountIndexViewModel> modelList = new List<AccountIndexViewModel>();
-
-            Models.DataClasses1DataContext db = new DataClasses1DataContext();
-            var users = db.Users.Where(u => u.UserName == searchString || u.Email == searchString).ToList();
-
-            foreach (var user in users)
-            {
-                Models.AccountIndexViewModel model = new AccountIndexViewModel();
-                model.ID = user.ID;
-                model.UserName = user.UserName;
-                model.Role = Roles.GetRolesForUser(user.UserName).FirstOrDefault();
-                model.Email = user.Email;
-                model.Active = user.Active;
-                modelList.Add(model);
-            }
-
-            return PartialView("_UsersPartial", modelList);
-        }
+        [Authorize(Roles = "Administratör")]
         public ActionResult Deactivate(int id)
         {
             Models.DataClasses1DataContext db = new DataClasses1DataContext();
@@ -94,6 +74,7 @@ namespace Salsbokningssystem.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "Administratör")]
         public ActionResult Activate(int id)
         {
             Models.DataClasses1DataContext db = new DataClasses1DataContext();
@@ -107,6 +88,7 @@ namespace Salsbokningssystem.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Administratör")]
         public ActionResult Edit(int id)
         {
             Models.DataClasses1DataContext db = new DataClasses1DataContext();
@@ -128,6 +110,7 @@ namespace Salsbokningssystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administratör")]
         public ActionResult Edit(EditUserModel model)
         {
             if (ModelState.IsValid)
@@ -217,6 +200,7 @@ namespace Salsbokningssystem.Controllers
 
         //
         // GET: /Account/Register
+        [Authorize(Roles = "Administratör")]
         public ActionResult Register()
         {
             Models.RegisterModel model = new RegisterModel();
@@ -228,6 +212,7 @@ namespace Salsbokningssystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administratör")]
         public ActionResult Register(RegisterModel model)
         {
 
@@ -252,6 +237,7 @@ namespace Salsbokningssystem.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "Administratör")]
         public ActionResult Delete(string userName)
         {
             try
@@ -273,6 +259,7 @@ namespace Salsbokningssystem.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "Administratör")]
         public ActionResult BatchFile()
         {
 
@@ -280,6 +267,7 @@ namespace Salsbokningssystem.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administratör")]
         public ActionResult BatchFile(HttpPostedFileBase file)
         {
 
@@ -329,6 +317,7 @@ namespace Salsbokningssystem.Controllers
             return fName + "." + lName;
         }
         [HttpPost]
+        [Authorize(Roles = "Administratör")]
         public ActionResult BatchRegister(Models.BatchRegisterViewModel model)
         {
             if (ModelState.IsValid)
@@ -354,6 +343,54 @@ namespace Salsbokningssystem.Controllers
             return RedirectToAction("Index");
         }
 
+        //
+        // GET: /Account/Manage
+        [Authorize]
+        public ActionResult Manage(ManageMessageId? message)
+        {
+            ViewBag.StatusMessage =
+                message == ManageMessageId.ChangePasswordSuccess ? "Ditt lösenord har ändrats"
+                : "";
+            ViewBag.ReturnUrl = Url.Action("Manage");
+            return View();
+        }
+
+        //
+        // POST: /Account/Manage
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public ActionResult Manage(LocalPasswordModel model)
+        {
+
+            ViewBag.ReturnUrl = Url.Action("Manage");
+            if (ModelState.IsValid)
+            {
+                // ChangePassword will throw an exception rather than return false in certain failure scenarios.
+                bool changePasswordSucceeded;
+                try
+                {
+                    changePasswordSucceeded = WebSecurity.ChangePassword(User.Identity.Name, model.OldPassword, model.NewPassword);
+                }
+                catch (Exception)
+                {
+                    changePasswordSucceeded = false;
+                }
+
+                if (changePasswordSucceeded)
+                {
+                    return RedirectToAction("Manage", new { Message = ManageMessageId.ChangePasswordSuccess });
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Det nuvarande eller det nya lösenordet är felaktigt.");
+                }
+            }
+
+            // If we got this far, something failed, redisplay form
+            return View(model);
+        }
         #region Helpers
         private ActionResult RedirectToLocal(string returnUrl)
         {
