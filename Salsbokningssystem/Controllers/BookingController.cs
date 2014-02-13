@@ -15,17 +15,27 @@ namespace Salsbokningssystem.Controllers
         // GET: /Booking/
         DataClasses1DataContext db = new DataClasses1DataContext();
 
-        public ActionResult Index()
+        public ActionResult Index(FormCollection form)
         {
             var bookings = from b in db.Bookings
                            orderby b.StartTime
-                           select b;
+                           select b;       
+
+            ViewBag.Room = (from f in db.Rooms
+                            select f).ToList();
+            ViewBag.Booking = (from f in db.Bookings
+                               select f).ToList();
+            
             return View(bookings);
         }
         
         [HttpGet]
         public ActionResult Book()
         {
+            //ViewBag.Room= (from f in db.Rooms
+            //              select f).ToList();
+            //ViewBag.Booking = (from f in db.Bookings
+            //                   select f).ToList();
             return View();
         }
 
@@ -71,11 +81,7 @@ namespace Salsbokningssystem.Controllers
                     return View();
                 }
 
-                //if (booking.EndTime <= booking.StartTime)
-                //{
-                //    ViewBag.Error = "Fel bookning START TIME måste vara tidgare än END TIME";
-                //    return View();
-                //}
+              
                 if (booking.EndTime < booking.StartTime.AddHours(1))
                 {
                     ViewBag.Error = "Bokningstiden får ej mindre än 1 timma.";

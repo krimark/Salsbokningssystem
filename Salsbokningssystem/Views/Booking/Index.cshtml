@@ -1,4 +1,6 @@
 ﻿@using System.Activities.Statements
+@using Salsbokningssystem.Helpers
+
 @{
     ViewBag.Title = "Projektrum Teknikhögskolan";
 }
@@ -30,7 +32,7 @@
 
 <h3>@Html.ActionLink("Boka ny tid", "Book")</h3>
 
-@foreach (var item in Model)
+@*@foreach (var item in Model)
 {
     <div>
         <h4>@item.Room.Name</h4>
@@ -39,7 +41,71 @@
         @if (Roles.IsUserInRole("Administratör"))
         {
             @Html.ActionLink("Ta bort bokning", "Remove", "Booking", new {id = item.ID}, null)
-        }
-        <hr />
+        }*@
+@*        <hr />
     </div>
-}
+}*@
+
+<text>Visa dag:</text>
+       
+@Html.DropDownList("bookingDateDDL", PopulateDropDown.Dates(), new { @class = "form-control"})
+
+       <table id="table" border="0" style="border-width:1px;border-style:solid;">
+ 
+    <thead>         
+    </thead> 
+    <tbody>
+     
+      <tr>  
+          <th>*</th>
+        @{
+    for (int j = 0; j < 8; j++)
+    {
+        int a = 8 + j;
+        int b=a+1;
+        <th>@a:00<br>@b:00</th>
+        
+    } 
+    }
+     </tr>       
+     @{
+    foreach (var r in ViewBag.Room )
+    {
+             <tr>
+
+                 <th>
+                     
+                      @r.Name
+                 </th>
+                 @{
+        for (int j = 0; j < 8 ; j++)
+        {
+            int t = j + 8;  
+                 <td>
+                   @{
+            foreach (var b in ViewBag.Booking)
+            {
+                
+
+                if (r.ID == b.RoomID && b.StartTime.Hour==t)
+                       {
+                
+                          
+                         <label style="background-color:red"  >reserved</label>      
+                             
+                   }
+                
+                   }
+                   }
+                  </td>
+        }
+                }
+                    </tr>
+    }
+              
+        }
+                
+         
+    </tbody>
+    </table>
+
