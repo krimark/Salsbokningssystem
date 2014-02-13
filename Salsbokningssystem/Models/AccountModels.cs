@@ -135,6 +135,7 @@ namespace Salsbokningssystem.Models
         public string UserName { get; set; }
         public string Role { get; set; }
         public string Email { get; set; }
+        public string UserGroup { get; set; }
         public bool Active { get; set; }
     }
 

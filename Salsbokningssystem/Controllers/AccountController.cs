@@ -31,6 +31,7 @@ namespace Salsbokningssystem.Controllers
                 model.UserName = user.UserName;
                 model.Role = Roles.GetRolesForUser(user.UserName).FirstOrDefault();
                 model.Email = user.Email;
+                model.UserGroup = user.UserGroup;
                 model.Active = user.Active;
                 modelList.Add(model);
             }
@@ -49,6 +50,9 @@ namespace Salsbokningssystem.Controllers
                     break;
                     case "Epost":
                         sortedList = modelList.OrderBy(u => u.Email).ToList();
+                    break;
+                    case "Grupp":
+                    sortedList = modelList.OrderBy(u => u.UserGroup).ToList();
                     break;
                 }
             }else{

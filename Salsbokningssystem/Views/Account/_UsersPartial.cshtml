@@ -23,6 +23,13 @@
                 new { orderBy = "Epost" },
                 new AjaxOptions { UpdateTargetId = "contentDiv" })
         </th>
+        <th>
+            @Ajax.ActionLink("Grupp",
+                "Index",
+                "Account",
+                new { orderBy = "Grupp" },
+                new AjaxOptions { UpdateTargetId = "contentDiv" })
+        </th>
     </tr>
     @foreach (var item in Model)
     {
@@ -35,6 +42,9 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserGroup)
             </td>
             <td>
                 @((bool)item.Active ? "Aktiv" : "Inaktiv")
