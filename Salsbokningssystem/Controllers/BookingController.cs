@@ -41,7 +41,7 @@ namespace Salsbokningssystem.Controllers
         }
 
         [HttpPost]
-        public ActionResult Book(Booking booking, FormCollection form, bool reccuringDate)
+        public ActionResult Book(Booking booking, FormCollection form, bool? reccuringDate)
         {
             if (ModelState.IsValid && !Roles.IsUserInRole("Användare"))
             {
