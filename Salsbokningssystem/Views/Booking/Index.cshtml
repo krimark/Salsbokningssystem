@@ -12,8 +12,8 @@
                 <h1>@ViewBag.Title</h1>
                 <h2>@ViewBag.Message</h2>
             </hgroup>
-            
-         
+
+
             <p id="maintitle">
                 Välkommen till bokningsidan för Teknikhögskolans projektrum.
 
@@ -33,81 +33,84 @@
 
 Visa dag:
 
-<div id="DDLsubmit" onchange="function1">  
+<div id="DDLsubmit" onchange="function1">
 
-@Html.DropDownList("bookingDateDDL", PopulateDropDown.Dates(), new { @class = "form-control"})
+    @Html.DropDownList("bookingDateDDL", PopulateDropDown.Dates(), new { @class = "form-control" })
 
- </div>    
+</div>
 
-       <table id="table" border="0" style="border-width:1px;border-style:solid;">
- 
-    <thead>         
-    </thead> 
+<table class="table1"">
+
+    <thead>
+    </thead>
     <tbody>
-     
-      <tr>  
-          <th>*</th>
+
+        <tr>
+            <th></th>
+            @{
+                for (int j = 0; j < 8; j++)
+                {
+                    int a = 8 + j;
+                    int b = a + 1;
+        
+                <th scope="col" abbr="Starter">@a:00<br>@b:00</th>
+        
+                } 
+            }
+        </tr>
         @{
-    for (int j = 0; j < 8; j++)
-    {
-        int a = 8 + j;
-        int b=a+1;
-        
-        <th>@a:00<br>@b:00</th>
-        
-    } 
-    }
-     </tr>       
-     @{
-    foreach (var r in ViewBag.Room )
-    {
-             <tr>
-
-                 <th>
-                     
-                      @r.Name
-                 </th>
-                 @{
-        for (int j = 0; j < 8 ; j++)
-        {
-            int t = j + 8;  
-                 <td>
-                   @{
-            foreach (var b in ViewBag.Booking)
+            foreach (var r in ViewBag.Room)
             {
-                
+            <tr>
 
-                if (r.ID == b.RoomID && b.StartTime.Hour==t)
-                       {
-                
-                   int a = b.EndTime.Hour - b.StartTime.Hour;
-                    
-                    for(int i=0; i<a; i++)
-                        
-                    {                    
-                        <label style="background-color:red"  >reserved</label> 
+                <th scope="row">
+
+                    @r.Name
+                </th>
+                @{
+                for (int j = 0; j < 8; j++)
+                {
+                    int t = j + 8;  
+                    <td>
+                        @{
+                    foreach (var b in ViewBag.Booking)
+                    {
+
+
+                        if (r.ID == b.RoomID && b.StartTime.Hour == t)
+                        {
+
+                            int a = b.EndTime.Hour - b.StartTime.Hour;
+
+                            for (int i = 0; i < a; i++)
+                            {                    
+                            <label style="color: rgba(217, 41, 44, 1)">Bokat</label> 
     
-                   }
-                             
-                   }
-                
-                   }
-                   }
-                  </td>
-        }
+                            }
+
+                        }
+                       
+
+                    }
+                   
+                        }
+
+                    </td>
                 }
-                    </tr>
-    }
+                }
+            </tr>
+            }
               
         }
-                
-         
+
+
     </tbody>
-    </table>
+</table>
 
 <script>
 
-function function1() {
+    function function1() {
 
-$("‪#‎DDLsubmit‬").submit()}
+        $("‪#‎DDLsubmit‬").submit()
+    }
 </script>
