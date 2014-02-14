@@ -321,6 +321,8 @@
     <Content Include="Views\Account\Edit.cshtml" />
     <Content Include="Views\Account\BatchFile.cshtml" />
     <Content Include="Views\Account\_UsersPartial.cshtml" />
+    <Content Include="Views\Account\RecoverPassword.cshtml" />
+    <Content Include="Views\Account\ResetPassword.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

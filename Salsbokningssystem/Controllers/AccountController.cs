@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Security;
+using Salsbokningssystem.Helpers;
 using WebMatrix.WebData;
 using Salsbokningssystem.Filters;
 using Salsbokningssystem.Models;
-using System.Security.Principal;
 using System.Web;
 using System.IO;
 
@@ -16,20 +16,19 @@ namespace Salsbokningssystem.Controllers
     [InitializeSimpleMembership]
     public class AccountController : Controller
     {
-
-        Random rand = new Random();
+        readonly Random rand = new Random();
+        DataClasses1DataContext db = new DataClasses1DataContext();
 
         [Authorize(Roles = "Administratör")]
         public ActionResult Index(string searchString, string orderBy)
         {
-            List<Models.AccountIndexViewModel> modelList = new List<AccountIndexViewModel>();
+            var modelList = new List<AccountIndexViewModel>();
 
-            Models.DataClasses1DataContext db = new DataClasses1DataContext();
             var users = db.Users.Where(u => u.UserName.Contains(searchString) || u.Email.Contains(searchString) || searchString == null).ToList();
 
-            foreach(var user in users)
+            foreach (var user in users)
             {
-                Models.AccountIndexViewModel model = new AccountIndexViewModel();
+                var model = new AccountIndexViewModel();
                 model.ID = user.ID;
                 model.UserName = user.UserName;
                 model.Role = Roles.GetRolesForUser(user.UserName).FirstOrDefault();
@@ -39,42 +38,42 @@ namespace Salsbokningssystem.Controllers
                 modelList.Add(model);
             }
 
-            List<Models.AccountIndexViewModel> sortedList = new List<AccountIndexViewModel>();
+            var sortedList = new List<AccountIndexViewModel>();
 
-            if(orderBy != null)
+            if (orderBy != null)
             {
-                switch(orderBy)
+                switch (orderBy)
                 {
                     case "Användarnamn":
                         sortedList = modelList.OrderBy(u => u.UserName).ToList();
-                    break;
+                        break;
                     case "Behörighet":
                         sortedList = modelList.OrderBy(u => u.Role).ToList();
-                    break;
+                        break;
                     case "Epost":
                         sortedList = modelList.OrderBy(u => u.Email).ToList();
-                    break;
+                        break;
                     case "Grupp":
-                    sortedList = modelList.OrderBy(u => u.UserGroup).ToList();
-                    break;
+                        sortedList = modelList.OrderBy(u => u.UserGroup).ToList();
+                        break;
                 }
-            }else{
+            }
+            else
+            {
                 sortedList = modelList;
             }
 
             if (searchString != null || orderBy != null)
                 return PartialView("_UsersPartial", sortedList);
-            else
-                return View(sortedList);
+
+            return View(sortedList);
         }
 
         [Authorize(Roles = "Administratör")]
         public ActionResult Deactivate(int id)
         {
-            Models.DataClasses1DataContext db = new DataClasses1DataContext();
-
-            Models.User user = db.Users.FirstOrDefault(u => u.ID == id);
-            user.Active = false;
+            var user = db.Users.FirstOrDefault(u => u.ID == id);
+            if (user != null) user.Active = false;
 
             db.SubmitChanges();
 
@@ -84,10 +83,9 @@ namespace Salsbokningssystem.Controllers
         [Authorize(Roles = "Administratör")]
         public ActionResult Activate(int id)
         {
-            Models.DataClasses1DataContext db = new DataClasses1DataContext();
 
-            Models.User user = db.Users.FirstOrDefault(u => u.ID == id);
-            user.Active = true;
+            var user = db.Users.FirstOrDefault(u => u.ID == id);
+            if (user != null) user.Active = true;
 
             db.SubmitChanges();
 
@@ -98,9 +96,7 @@ namespace Salsbokningssystem.Controllers
         [Authorize(Roles = "Administratör")]
         public ActionResult Edit(int id)
         {
-            Models.DataClasses1DataContext db = new DataClasses1DataContext();
-
-            Models.EditUserModel user = db.Users.Where(i => i.ID == id).Select(u => new Models.EditUserModel
+            var user = db.Users.Where(i => i.ID == id).Select(u => new EditUserModel
             {
                 UserId = u.ID,
                 UserName = u.UserName,
@@ -112,8 +108,10 @@ namespace Salsbokningssystem.Controllers
 
             }).FirstOrDefault();
 
-            user.Role = Roles.GetRolesForUser(user.UserName).FirstOrDefault();
-
+            if (user != null)
+            {
+                user.Role = Roles.GetRolesForUser(user.UserName).FirstOrDefault();
+            }
             return View(user);
         }
 
@@ -124,23 +122,23 @@ namespace Salsbokningssystem.Controllers
         {
             if (ModelState.IsValid)
             {
+                var user = db.Users.FirstOrDefault(f => f.ID == model.UserId);
 
-                Models.DataClasses1DataContext db = new DataClasses1DataContext();
-
-                Models.User user = db.Users.FirstOrDefault(f => f.ID == model.UserId);
-
-                user.Email = model.Email;
-                user.Active = model.Active;
-                user.UserGroup = model.UserGroup;
-
-                db.SubmitChanges();
-
-                string currentRole = Roles.GetRolesForUser(user.UserName).FirstOrDefault();
-
-                if (currentRole != model.Role)
+                if (user != null)
                 {
-                    Roles.RemoveUserFromRole(user.UserName, currentRole);
-                    Roles.AddUserToRole(user.UserName, model.Role);
+                    user.Email = model.Email;
+                    user.Active = model.Active;
+                    user.UserGroup = model.UserGroup;
+
+                    db.SubmitChanges();
+
+                    string currentRole = Roles.GetRolesForUser(user.UserName).FirstOrDefault();
+
+                    if (currentRole != model.Role)
+                    {
+                        Roles.RemoveUserFromRole(user.UserName, currentRole);
+                        Roles.AddUserToRole(user.UserName, model.Role);
+                    }
                 }
 
                 // ChangePassword will throw an exception rather than return false in certain failure scenarios.
@@ -213,7 +211,7 @@ namespace Salsbokningssystem.Controllers
         [Authorize(Roles = "Administratör")]
         public ActionResult Register()
         {
-            Models.RegisterModel model = new RegisterModel();
+            var model = new RegisterModel();
             return View(model);
         }
 
@@ -259,10 +257,10 @@ namespace Salsbokningssystem.Controllers
                 }
 
                 ((SimpleMembershipProvider)Membership.Provider).DeleteAccount(userName); // deletes record from webpages_Membership table
-                ((SimpleMembershipProvider)Membership.Provider).DeleteUser(userName, true); // deletes record from UserProfile table
+                Membership.Provider.DeleteUser(userName, true); // deletes record from UserProfile table
 
             }
-            catch
+            catch (Exception)
             {
             }
 
@@ -284,7 +282,7 @@ namespace Salsbokningssystem.Controllers
             // Verify that the user selected a file
             if (file != null && file.ContentLength > 0)
             {
-                using (StreamReader sr = new StreamReader(file.InputStream, System.Text.Encoding.Default))
+                using (var sr = new StreamReader(file.InputStream, System.Text.Encoding.Default))
                 {
                     string fileText = sr.ReadToEnd();
                     string[] lineValues = fileText.Split(new[] { ';', '\r' })
@@ -295,10 +293,10 @@ namespace Salsbokningssystem.Controllers
                     if (lineValues[lineValues.Length - 1] == "")
                         nrOfLines--;
 
-                    Models.BatchRegisterViewModel model = new Models.BatchRegisterViewModel();
+                    var model = new BatchRegisterViewModel();
                     for (int i = 0; i < nrOfLines; i += 6)
                     {
-                        Models.BatchRegisterModel user = new Models.BatchRegisterModel();
+                        var user = new BatchRegisterModel();
                         user.UserName = GenerateUserName(lineValues[i], lineValues[i + 1]);
                         user.Password = GeneratePassword(8);
                         user.Email = lineValues[i + 4];
@@ -327,7 +325,7 @@ namespace Salsbokningssystem.Controllers
 
         private string GenerateUserName(string lName, string fName)
         {
-            int n = fName.IndexOf(" ");
+            int n = fName.IndexOf(" ", StringComparison.Ordinal);
 
             if (n > 0)
                 fName = fName.Substring(0, n);
@@ -339,7 +337,7 @@ namespace Salsbokningssystem.Controllers
         }
         [HttpPost]
         [Authorize(Roles = "Administratör")]
-        public ActionResult BatchRegister(Models.BatchRegisterViewModel model)
+        public ActionResult BatchRegister(BatchRegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -362,6 +360,62 @@ namespace Salsbokningssystem.Controllers
                 }
             }
             return RedirectToAction("Index");
+        }
+
+        [AllowAnonymous]
+        public ActionResult RecoverPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public ActionResult RecoverPassword(string userName)
+        {
+            var user = Membership.GetUser(userName);
+            if (user == null)
+            {
+                TempData["Message"] = "Användarnamnet du angav existerar inte.";
+            }
+            else
+            {
+                var token = WebSecurity.GeneratePasswordResetToken(userName);
+
+                var resetLink = "<a href='" + Url.Action("ResetPassword", "Account", new { un = userName, rt = token }, "http") + "'>Återställ lösenord</a>";
+
+                var body = "<b>Någon (du) har angett att du vill få ett nytt lösenord.<br />Om du inte vill ha ett nytt lösenord så ignorerar du länken nedan, annars klickar du på den.</b><br/>" + resetLink;
+
+                Mailer.SendMail(user.Email, body, "Återställning av lösenord.");
+
+                TempData["Message"] = "Meddelande skickat.";
+            }
+            return View();
+        }
+
+        [AllowAnonymous]
+        public ActionResult ResetPassword(string un, string rt)
+        {
+            var user = (from u in db.Users
+                        where u.UserName == un
+                        select u).FirstOrDefault();
+
+            if (user != null)
+            {
+                var newpassword = GeneratePassword(8);
+                var response = WebSecurity.ResetPassword(rt, newpassword);
+                if (response == true)
+                {
+                    var body = "<b>Ditt nya lösenord</b><br/>" + newpassword;
+                    Mailer.SendMail(user.Email, body, "Ditt lösenord har ändrats");
+                    TempData["Message"] = "Meddelande skickat.";
+                }
+                else
+                {
+                    TempData["Message"] = "Nothing to see here...";
+                }
+            }
+            return View();
         }
 
         //
@@ -403,24 +457,13 @@ namespace Salsbokningssystem.Controllers
                 {
                     return RedirectToAction("Manage", new { Message = ManageMessageId.ChangePasswordSuccess });
                 }
-                else
-                {
-                    ModelState.AddModelError("", "Det nuvarande eller det nya lösenordet är felaktigt.");
-                }
+                ModelState.AddModelError("", "Det nuvarande eller det nya lösenordet är felaktigt.");
             }
 
             // If we got this far, something failed, redisplay form
             return View(model);
         }
         #region Helpers
-        private ActionResult RedirectToLocal(string returnUrl)
-        {
-            if (Url.IsLocalUrl(returnUrl))
-            {
-                return Redirect(returnUrl);
-            }
-            return RedirectToAction("Index", "Home");
-        }
 
         public enum ManageMessageId
         {
