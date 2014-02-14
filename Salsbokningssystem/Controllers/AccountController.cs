@@ -373,7 +373,7 @@ namespace Salsbokningssystem.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult RecoverPassword(string userName)
         {
-            var user = Membership.GetUser(userName);
+            var user = db.Users.FirstOrDefault(u => u.UserName == userName);
             if (user == null)
             {
                 TempData["Message"] = "Användarnamnet du angav existerar inte.";
@@ -384,7 +384,7 @@ namespace Salsbokningssystem.Controllers
 
                 var resetLink = "<a href='" + Url.Action("ResetPassword", "Account", new { un = userName, rt = token }, "http") + "'>Återställ lösenord</a>";
 
-                var body = "<b>Någon (du) har angett att du vill få ett nytt lösenord.<br />Om du inte vill ha ett nytt lösenord så ignorerar du länken nedan, annars klickar du på den.</b><br/>" + resetLink;
+                var body = "<b>Någon (du?) har angett att du vill få ett nytt lösenord.<br />Om du inte vill ha ett nytt lösenord så ignorerar du länken nedan, annars klickar du på den.</b><br/>" + resetLink;
 
                 Mailer.SendMail(user.Email, body, "Återställning av lösenord.");
 
@@ -396,19 +396,17 @@ namespace Salsbokningssystem.Controllers
         [AllowAnonymous]
         public ActionResult ResetPassword(string un, string rt)
         {
-            var user = (from u in db.Users
-                        where u.UserName == un
-                        select u).FirstOrDefault();
+            var user = db.Users.FirstOrDefault(u => u.UserName == un);
 
             if (user != null)
             {
                 var newpassword = GeneratePassword(8);
                 var response = WebSecurity.ResetPassword(rt, newpassword);
-                if (response == true)
+                if (response)
                 {
                     var body = "<b>Ditt nya lösenord</b><br/>" + newpassword;
                     Mailer.SendMail(user.Email, body, "Ditt lösenord har ändrats");
-                    TempData["Message"] = "Meddelande skickat.";
+                    TempData["Message"] = "Ditt nya lösenord har skickats till din e-postadress.";
                 }
                 else
                 {
