@@ -3,7 +3,9 @@
 
 @{
     ViewBag.Title = "Projektrum Teknikhögskolan";
+    
 }
+<link href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css" rel="stylesheet" />
 @section featured {
     <section class="featured">
         <div class="content-wrapper">
@@ -31,13 +33,26 @@
 <h3>@Html.ActionLink("Boka ny tid", "Book")</h3>
 
 
-Visa dag:
+
+@if(Roles.IsUserInRole("Användare"))
+{
+<text>Visa dag:</text>
 
 <div id="DDLsubmit" onchange="function1">
-
     @Html.DropDownList("bookingDateDDL", PopulateDropDown.Dates(), new { @class = "form-control" })
-
 </div>
+}
+
+else
+{
+    @Html.Editor("datepicker")
+    <input type="button" name="visa" value="Visa datum" />
+} 
+
+<br />
+<br />
+<br />
+<br />
 
 <table class="table1"">
 
@@ -113,7 +128,11 @@ Visa dag:
 
     </tbody>
 </table>
-
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+    <script src="~/Scripts/datepicker-sv.js"></script>
+}
 <script>
 
     function function1() {
