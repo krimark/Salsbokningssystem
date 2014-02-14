@@ -17,7 +17,7 @@ namespace Salsbokningssystem.Controllers
     public class AccountController : Controller
     {
         readonly Random rand = new Random();
-        DataClasses1DataContext db = new DataClasses1DataContext();
+        readonly DataClasses1DataContext db = new DataClasses1DataContext();
 
         [Authorize(Roles = "Administratör")]
         public ActionResult Index(string searchString, string orderBy)

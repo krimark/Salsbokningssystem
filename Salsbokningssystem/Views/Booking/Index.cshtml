@@ -31,45 +31,32 @@
         <h4>@TempData["UserMessage"]</h4>  
     }
 </div>
+<h3>@Html.ActionLink("Boka ny tid", "Book")</h3>
+
 @using (Html.BeginForm())
 {
 
-<h3>@Html.ActionLink("Boka ny tid", "Book")</h3>
-
-
-
-if(Roles.IsUserInRole("Användare"))
-{
-<text>Visa dag:</text>
-    
-
-
-    @Html.DropDownList("bookingDateDDL", PopulateDropDown.Dates(), new { @class = "form-control" })
+    if (Roles.IsUserInRole("Användare"))
+        {
+        <text>Visa dag:</text>
+        @Html.DropDownList("bookingDateDDL", PopulateDropDown.Dates(), new { @class = "form-control" })
     }
-     
-         
-        
-
-else
-{
-    @Html.Editor("datepicker")
-    
-} 
- <p>
-            <input type="submit" value="Visa datum" />
-        </p>
-<br />
-<br />
-<br />
-<br />
+    else
+    {
+        @Html.Editor("datepicker")
+    } 
+    <p>
+        <input type="submit" value="Visa datum" />
+    </p>
 }
-<table id="table" class="table1"">
-
+<br />
+<br />
+<br />
+<br />
+<table id="table" class="table1">
     <thead>
     </thead>
     <tbody>
-
-
         <tr>
             <th></th>
             @{
@@ -78,7 +65,7 @@ else
                     int a = 8 + j;
                     int b = a + 1;
         
-                <th scope="col" >@a:00<br>@b:00</th>
+                <th scope="col">@a:00<br>@b:00</th>
         
                 } 
             }
@@ -87,57 +74,40 @@ else
             foreach (var r in ViewBag.Room)
             {
             <tr>
-
-                <th scope="row">
-
-                    @r.Name
-                </th>
+                <th scope="row">@r.Name</th>
                 @{
                 for (int j = 0; j < 8; j++)
                 {
                     int t = j + 8;  
                     <td>
                         @{
-                            int c=0;
+                    int c = 0;
                     foreach (var b in ViewBag.Booking)
                     {
-                        
-                        
-
-                        if (r.ID == b.RoomID && b.StartTime.Hour <= t && t< b.EndTime.Hour)
+                        if (r.ID == b.RoomID && b.StartTime.Hour <= t && t < b.EndTime.Hour)
                         {
-                            c=1;
+                            c = 1;
                         }
 
-                    }                        
-                           if(c == 1)
-                           {
-                                <label style="color: rgba(217, 41, 44, 1)">Bokat</label> 
-                           }
-                           else
-                           {
-                               <label >ej Bokat</label> 
-                           }
-
-                        
-                       
-
                     }
-                   
-                        
-
+                    if (c == 1)
+                    {
+                            <label style="color: rgba(217, 41, 44, 1)">Bokat</label> 
+                    }
+                    else
+                    {
+                            <label>ej Bokat</label> 
+                    }
+                        }
                     </td>
                 }
                 }
             </tr>
             }
-              
         }
-
-
     </tbody>
 </table>
-    
+
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
     <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>

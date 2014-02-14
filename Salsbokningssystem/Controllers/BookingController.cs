@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http.Formatting;
 using Salsbokningssystem.Helpers;
 using Salsbokningssystem.Models;
 using System.Linq;
@@ -14,60 +15,53 @@ namespace Salsbokningssystem.Controllers
     {
         //
         // GET: /Booking/
-        DataClasses1DataContext db = new DataClasses1DataContext();
-          [HttpGet]
-        public ActionResult Index(FormCollection form)
+        readonly DataClasses1DataContext db = new DataClasses1DataContext();
+
+        public ActionResult Index()
         {
             var bookings = from b in db.Bookings
                            orderby b.StartTime
-                           select b;       
+                           select b;
 
             ViewBag.Room = (from f in db.Rooms
                             select f).ToList();
 
             ViewBag.Booking = (from f in db.Bookings
-                               where f.StartTime.Date==DateTime.Now.Date
+                               where f.StartTime.Date == DateTime.Now.Date
                                select f).ToList();
-            //DateTime t = DateTime.Now;
-            // string st=t.ToString("yyyy-MM-dd");
-            // ViewBag.date = st;
-            
+
             return View(bookings);
 
         }
-         [HttpPost]
-          public ActionResult Index(FormCollection form, string bookingDateDDL, string datepicker)
-          {
-              var bookings = from b in db.Bookings
-                             orderby b.StartTime
-                             select b;
 
-              ViewBag.Room = (from f in db.Rooms
-                              select f).ToList();
-              DateTime t;
-              if (bookingDateDDL != null)
-              {
+        [HttpPost]
+        public ActionResult Index(FormCollection form)
+        {
+            var bookings = from b in db.Bookings
+                           orderby b.StartTime
+                           select b;
 
-                   t = Convert.ToDateTime(bookingDateDDL);
-              }
-              else
-              {
-                  t = Convert.ToDateTime(datepicker);
-              }
-             string s = bookingDateDDL;
-             ViewBag.Booking = (from f in db.Bookings
-                                where f.StartTime.Date == t
-                                select f).ToList();
-           
+            ViewBag.Room = (from r in db.Rooms
+                            select r).ToList();
 
-              return View(bookings);
+            var bookingDate = Roles.IsUserInRole("Användare") ? form["bookingDateDDL"] : form["datepicker"];
 
-          }
+            if (String.IsNullOrEmpty(bookingDate))
+            {
+                return View(bookings);
+            }
 
-        [HttpGet]
+            var date = Convert.ToDateTime(bookingDate);
+
+            ViewBag.Booking = (from b in db.Bookings
+                where b.StartTime.Date == date
+                select b).ToList();
+
+            return View(bookings);
+        }
+
         public ActionResult Book()
         {
-          
             return View();
         }
 
@@ -161,7 +155,7 @@ namespace Salsbokningssystem.Controllers
                     return View();
                 }
 
-              
+
                 if (booking.EndTime < booking.StartTime.AddHours(1))
                 {
                     ViewBag.Error = "Bokningstiden får ej mindre än 1 timma.";
@@ -198,7 +192,6 @@ namespace Salsbokningssystem.Controllers
         }
 
         [Authorize(Roles = "Administratör")]
-        [HttpGet]
         public ActionResult Remove(int? id)
         {
             if (id == null)

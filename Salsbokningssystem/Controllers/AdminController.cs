@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using Salsbokningssystem.Models;
 
@@ -13,7 +11,7 @@ namespace Salsbokningssystem.Controllers
     {
         //
         // GET: /Admin/
-        DataClasses1DataContext db = new DataClasses1DataContext();
+        readonly DataClasses1DataContext db = new DataClasses1DataContext();
 
         public ActionResult Index()
         {
