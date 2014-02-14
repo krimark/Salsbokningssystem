@@ -45,6 +45,7 @@ Visa dag:
     </thead>
     <tbody>
 
+
         <tr>
             <th></th>
             @{
@@ -53,7 +54,7 @@ Visa dag:
                     int a = 8 + j;
                     int b = a + 1;
         
-                <th scope="col" abbr="Starter">@a:00<br>@b:00</th>
+                <th scope="col" >@a:00<br>@b:00</th>
         
                 } 
             }
@@ -73,28 +74,33 @@ Visa dag:
                     int t = j + 8;  
                     <td>
                         @{
+                            int c=0;
                     foreach (var b in ViewBag.Booking)
                     {
+                        
+                        
 
-
-                        if (r.ID == b.RoomID && b.StartTime.Hour == t)
+                        if (r.ID == b.RoomID && b.StartTime.Hour <= t && t< b.EndTime.Hour)
                         {
-
-                            int a = b.EndTime.Hour - b.StartTime.Hour;
-
-                            for (int i = 0; i < a; i++)
-                            {                    
-                            <td>
-                                <label style="color: rgba(217, 41, 44, 1)">Bokat</label> 
-                            </td>
-                            }
-
+                            c=1;
                         }
+
+                    }                        
+                           if(c == 1)
+                           {
+                                <label style="color: rgba(217, 41, 44, 1)">Bokat</label> 
+                           }
+                           else
+                           {
+                               <label >ej Bokat</label> 
+                           }
+
+                        
                        
 
                     }
                    
-                        }
+                        
 
                     </td>
                 }
@@ -115,3 +121,4 @@ Visa dag:
         $("‪#‎DDLsubmit‬").submit()
     }
 </script>
+@*abbr="Starter"*@
