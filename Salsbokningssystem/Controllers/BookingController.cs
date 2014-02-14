@@ -15,7 +15,7 @@ namespace Salsbokningssystem.Controllers
         //
         // GET: /Booking/
         DataClasses1DataContext db = new DataClasses1DataContext();
-
+          [HttpGet]
         public ActionResult Index(FormCollection form)
         {
             var bookings = from b in db.Bookings
@@ -26,18 +26,48 @@ namespace Salsbokningssystem.Controllers
                             select f).ToList();
 
             ViewBag.Booking = (from f in db.Bookings
+                               where f.StartTime.Date==DateTime.Now.Date
                                select f).ToList();
+            //DateTime t = DateTime.Now;
+            // string st=t.ToString("yyyy-MM-dd");
+            // ViewBag.date = st;
             
             return View(bookings);
+
         }
+         [HttpPost]
+          public ActionResult Index(FormCollection form, string bookingDateDDL, string datepicker)
+          {
+              var bookings = from b in db.Bookings
+                             orderby b.StartTime
+                             select b;
+
+              ViewBag.Room = (from f in db.Rooms
+                              select f).ToList();
+              DateTime t;
+              if (bookingDateDDL != null)
+              {
+
+                   t = Convert.ToDateTime(bookingDateDDL);
+              }
+              else
+              {
+                  t = Convert.ToDateTime(datepicker);
+              }
+             string s = bookingDateDDL;
+             ViewBag.Booking = (from f in db.Bookings
+                                where f.StartTime.Date == t
+                                select f).ToList();
+           
+
+              return View(bookings);
+
+          }
 
         [HttpGet]
         public ActionResult Book()
         {
-            //ViewBag.Room= (from f in db.Rooms
-            //              select f).ToList();
-            //ViewBag.Booking = (from f in db.Bookings
-            //                   select f).ToList();
+          
             return View();
         }
 

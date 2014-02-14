@@ -13,6 +13,8 @@
 
                 <h1>@ViewBag.Title</h1>
                 <h2>@ViewBag.Message</h2>
+
+
             </hgroup>
 
 
@@ -29,32 +31,39 @@
         <h4>@TempData["UserMessage"]</h4>  
     }
 </div>
+@using (Html.BeginForm())
+{
 
 <h3>@Html.ActionLink("Boka ny tid", "Book")</h3>
 
 
 
-@if(Roles.IsUserInRole("Användare"))
+if(Roles.IsUserInRole("Användare"))
 {
 <text>Visa dag:</text>
+    
 
-<div id="DDLsubmit" onchange="function1">
+
     @Html.DropDownList("bookingDateDDL", PopulateDropDown.Dates(), new { @class = "form-control" })
-</div>
-}
+    }
+     
+         
+        
 
 else
 {
     @Html.Editor("datepicker")
-    <input type="button" name="visa" value="Visa datum" />
+    
 } 
-
+ <p>
+            <input type="submit" value="Visa datum" />
+        </p>
 <br />
 <br />
 <br />
 <br />
-
-<table class="table1"">
+}
+<table id="table" class="table1"">
 
     <thead>
     </thead>
@@ -128,16 +137,10 @@ else
 
     </tbody>
 </table>
+    
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
     <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
     <script src="~/Scripts/datepicker-sv.js"></script>
 }
-<script>
 
-    function function1() {
-
-        $("‪#‎DDLsubmit‬").submit()
-    }
-</script>
-@*abbr="Starter"*@
